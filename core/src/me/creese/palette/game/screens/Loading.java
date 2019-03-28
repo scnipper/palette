@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.creese.palette.game.PaletteStart;
+import me.creese.palette.game.entity.BigPixel;
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.Shapes;
@@ -77,14 +78,14 @@ public class Loading extends GameView {
         });
         shape.setProjMatrix(prep.getCamera().combined);
 
-    /*    prep.addDraw(FTextures.STEP_BACK_BTN, 475, 162, new TexturePrepare.Draw() {
+        prep.addDraw(FTextures.PIXEL_SQUARE, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL, new TexturePrepare.Draw() {
             @Override
             public void draw(float bX, float bY) {
-
-                shape.rectRound(bX, bY, 475, 162, 81);
-
+                shape.setSmooth(0);
+                shape.rect(bX, bY, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL);
+                shape.setSmooth(1.5f);
             }
-        });*/
+        });
 
         prep.start();
 

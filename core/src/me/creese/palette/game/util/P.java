@@ -8,6 +8,7 @@ public class P {
     public static final float HEIGHT = 1920;
 
     public static final Color BACKGROUND_COLOR = new Color(0xdbdbdbff);
+    public static final Color GRAY_FONT_COLOR = new Color(0x969696ff);
     private static P instance;
     public AssetManager asset;
 

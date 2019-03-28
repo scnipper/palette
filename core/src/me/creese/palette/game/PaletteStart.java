@@ -1,5 +1,7 @@
 package me.creese.palette.game;
 
+import com.badlogic.gdx.Gdx;
+
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.MainScreen;
 import me.creese.palette.game.util.P;
@@ -23,5 +25,11 @@ public class PaletteStart extends Display {
 
 
         showGameView(MainScreen.class);
+    }
+
+    @Override
+    public void render() {
+        super.render();
+        Gdx.app.log("FPS", String.valueOf(1/ Gdx.graphics.getDeltaTime()));
     }
 }
