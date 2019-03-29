@@ -26,8 +26,8 @@ public class TexturePrepare extends Thread implements Disposable {
     private final ArrayList<Texture> pages;
     private final FrameBuffer fbo;
     public ArrayList<Rectangle> rects;
-    private int widthFbo = 256;
-    private int heightFbo = 256;
+    private int widthFbo = 1024;
+    private int heightFbo = 1024;
     private int paddingX = 0;
     private int paddingY = 0;
     private PreAndPostDraw preAndPostDraw;

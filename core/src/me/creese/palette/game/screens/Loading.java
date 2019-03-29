@@ -61,7 +61,7 @@ public class Loading extends GameView {
         final Shapes shape = new Shapes();
         prep.setPaddingX(2);
         prep.setPaddingY(2);
-        // prep.setDebugImage(true);
+        //prep.setDebugImage(true);
         prep.setPreAndPostDraw(new TexturePrepare.PreAndPostDraw() {
             @Override
             public void drawPre() {
@@ -78,12 +78,31 @@ public class Loading extends GameView {
         });
         shape.setProjMatrix(prep.getCamera().combined);
 
-        prep.addDraw(FTextures.PIXEL_SQUARE, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL, new TexturePrepare.Draw() {
+        prep.addDraw(FTextures.PIXEL_SQUARE, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL, (bX, bY) -> {
+            shape.setSmooth(0);
+            shape.rect(bX, bY, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL);
+            shape.setSmooth(1.5f);
+        });
+        prep.addDraw(FTextures.ARC_PALETTE_BUTTON, 180, 180, new TexturePrepare.Draw() {
             @Override
             public void draw(float bX, float bY) {
-                shape.setSmooth(0);
-                shape.rect(bX, bY, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL);
-                shape.setSmooth(1.5f);
+                shape.arcLine(bX,bY,90,80,300,12);
+                shape.arcLine(bX,bY,90,40,20,12);
+            }
+        });
+
+        prep.addDraw(FTextures.SMALL_ARC_PALETTE, 120, 120, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                shape.arcLine(bX,bY,60,120,80,12);
+                shape.arcLine(bX,bY,60,220,30,12);
+            }
+        });
+
+        prep.addDraw(FTextures.CIRCLE_PALETTE, 180, 180, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                shape.circle(bX,bY,90);
             }
         });
 

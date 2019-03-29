@@ -13,7 +13,10 @@ import java.util.ArrayList;
 
 import me.creese.palette.game.entity.BigPixel;
 import me.creese.palette.game.entity.GroupPixels;
+import me.creese.palette.game.entity.PaletteButtons;
 import me.creese.palette.game.entity.PixelsControl;
+import me.creese.palette.game.entity.buttons.PaletteButton;
+import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
@@ -47,6 +50,22 @@ public class MainScreen extends GameView {
 
 
         generatePalette();
+
+        PaletteButtons paletteButtons = new PaletteButtons();
+        addActor(paletteButtons);
+
+        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
+        ResForPaletteButtons res = new ResForPaletteButtons(prepare);
+        for (int i = 0; i < palette.size(); i++) {
+            Color color = palette.get(i);
+            PaletteButton button = new PaletteButton(res,i+1);
+            button.setColor(color);
+            float w = button.getWidth() + 40;
+            button.setX(w * i);
+            paletteButtons.addActor(button);
+            if(i == palette.size()-1)
+            paletteButtons.setWidth(paletteButtons.getChildren().size* w);
+        }
 
 
     }

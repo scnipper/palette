@@ -58,6 +58,7 @@ public class BigPixel extends Actor {
     public void setPaint(boolean paint) {
         isPaint = paint;
         if (isPaint) {
+            font.getData().setScale(0.8f);
             fontCache.clear();
         }
     }

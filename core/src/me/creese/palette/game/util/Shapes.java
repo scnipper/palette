@@ -323,7 +323,7 @@ public class Shapes {
         float angle = 2 * MathUtils.PI / segments;
         float cos = MathUtils.cos(angle);
         float sin = MathUtils.sin(angle);
-        float cx = radius - 1.5f, cy = 0;
+        float cx = radius - smooth, cy = 0;
         float cx2 = radius, cy2 = 0;
         segments += 2;
         check(segments * 2 + 3);
@@ -482,7 +482,6 @@ public class Shapes {
 
         float cx2 = radius * MathUtils.cos(start * MathUtils.degreesToRadians);
         float cy2 = radius * MathUtils.sin(start * MathUtils.degreesToRadians);
-        //segments++;
         check(segments * 2 + 3);
         short startVert = vertexAdd(x, y, color);
         vertexAdd(x + cx, y + cy, color);
@@ -511,16 +510,85 @@ public class Shapes {
             short vertex3 = (short) (numVert - 2);
             short vertex4 = (short) (numVert - 1);
             indicesAdd(startVert, vertex1, vertex3, vertex1, vertex2, vertex4, vertex1, vertex3, vertex4);
-          /*  if(i == segments -1) {
-                vertexAdd(x + cx, y + cy, color);
-                vertexAdd(x + cx2, y + cy2, clearColor);
+        }
+    }
 
-                vertex1 = (short) (numVert - 4);
-                vertex2 = (short) (numVert - 3);
-                vertex3 = (short) (numVert - 2);
-                vertex4 = (short) (numVert - 1);
-                indicesAdd(startVert, vertex1, vertex3, vertex1, vertex2, vertex4, vertex1, vertex3, vertex4);
-            }*/
+    public void arcLine(float x, float y, float radius, float start, float degrees,float widthLine) {
+
+        int segments = Math.max(1, (int) (6 * (float) Math.cbrt(radius))) * 3;
+
+
+        x += radius;
+        y += radius;
+
+        float angle = (2 * MathUtils.PI * (degrees / 360.0f)) / segments;
+
+        check(segments * 4 + 4);
+        float cos = MathUtils.cos(angle);
+        float sin = MathUtils.sin(angle);
+
+        //p1
+        float startCos = MathUtils.cos(start * MathUtils.degreesToRadians);
+        float cx1 = (radius - widthLine)* startCos;
+        float cy1 = (radius - widthLine)*MathUtils.sin(start * MathUtils.degreesToRadians);
+        //p2
+        float cx2 = ((radius - widthLine) + smooth)* MathUtils.cos(start * MathUtils.degreesToRadians);
+        float cy2 = ((radius - widthLine) + smooth)*MathUtils.sin(start * MathUtils.degreesToRadians);
+        //p3
+        float cx3 = (radius - smooth)* MathUtils.cos(start * MathUtils.degreesToRadians);
+        float cy3 = (radius - smooth)*MathUtils.sin(start * MathUtils.degreesToRadians);
+        //p4
+        float cx4 = radius* MathUtils.cos(start * MathUtils.degreesToRadians);
+        float cy4 = radius*MathUtils.sin(start * MathUtils.degreesToRadians);
+        //check(4);
+        vertexAdd(x + cx1, y + cy1, clearColor);
+        vertexAdd(x + cx2, y + cy2, color);
+        vertexAdd(x + cx3, y + cy3, color);
+        vertexAdd(x + cx4, y + cy4, clearColor);
+
+        for (int i = 0; i < segments; i++) {
+
+            if (check(4)) {
+                vertexAdd(x + cx1, y + cy1, clearColor);
+                vertexAdd(x + cx2, y + cy2, color);
+                vertexAdd(x + cx3, y + cy3, color);
+                vertexAdd(x + cx4, y + cy4, clearColor);
+            }
+            float temp = cx1;
+            cx1 = cos * cx1 - sin * cy1;
+            cy1 = sin * temp + cos * cy1;
+
+            temp = cx2;
+            cx2 = cos * cx2 - sin * cy2;
+            cy2 = sin * temp + cos * cy2;
+
+            temp = cx3;
+            cx3 = cos * cx3 - sin * cy3;
+            cy3 = sin * temp + cos * cy3;
+
+            temp = cx4;
+            cx4 = cos * cx4 - sin * cy4;
+            cy4 = sin * temp + cos * cy4;
+
+            short vertex5 = vertexAdd(x + cx1, y + cy1, clearColor);
+
+            short vertex6 = vertexAdd(x + cx2, y + cy2, color);
+            short vertex7 = vertexAdd(x + cx3, y + cy3, color);
+
+            short vertex8 = vertexAdd(x + cx4, y + cy4, clearColor);
+
+
+            short vertex1 = (short) (numVert - 8);
+            short vertex2 = (short) (numVert - 7);
+            short vertex3 = (short) (numVert - 6);
+            short vertex4 = (short) (numVert - 5);
+
+
+            indicesAdd(vertex1, vertex5, vertex6, vertex1, vertex2, vertex6,
+
+                    vertex2, vertex6, vertex7, vertex2, vertex3, vertex7,
+
+                    vertex3, vertex7, vertex8, vertex3, vertex4, vertex8);
         }
     }
 
