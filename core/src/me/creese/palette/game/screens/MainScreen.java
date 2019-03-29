@@ -3,11 +3,7 @@ package me.creese.palette.game.screens;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
-import com.badlogic.gdx.graphics.g2d.PolygonBatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -36,20 +32,22 @@ public class MainScreen extends GameView {
         palette = new ArrayList<>();
 
 
-        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT),new SpriteBatch(8191)){
+        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), getRootStage().getBatch()) {
             @Override
             public void draw() {
                 super.draw();
                 //System.out.println(((SpriteBatch) stagePixel.getBatch()).renderCalls);
             }
         };
-        addStage(stagePixel);
-        groupPixels = new GroupPixels();
+        PixelsControl pixelsControl = new PixelsControl(stagePixel);
+        addActor(pixelsControl);
+        addStage(stagePixel, 0);
+        groupPixels = new GroupPixels(pixelsControl);
         stagePixel.addActor(groupPixels);
 
-        addActor(new PixelsControl(stagePixel));
 
         generatePalette();
+
 
     }
 
@@ -70,13 +68,13 @@ public class MainScreen extends GameView {
         int posY = 0;
         sprite = prepare.getByName(FTextures.PIXEL_SQUARE);
 
-        for (int i = 0; i < pixels.remaining(); i+=4) {
+        for (int i = 0; i < pixels.remaining(); i += 4) {
             int color = pixels.get(i) & 0x000000ff;
 
 
-            color = (color << 8) | (pixels.get(i+1)& 0x000000ff);
-            color = (color << 8) | (pixels.get(i+2)& 0x000000ff);
-            color = (color << 8) | (pixels.get(i+3)& 0x000000ff);
+            color = (color << 8) | (pixels.get(i + 1) & 0x000000ff);
+            color = (color << 8) | (pixels.get(i + 2) & 0x000000ff);
+            color = (color << 8) | (pixels.get(i + 3) & 0x000000ff);
 
 
             Color colorObj = new Color(color);
@@ -91,11 +89,13 @@ public class MainScreen extends GameView {
             groupPixels.addActor(bigPixel);
             posX++;
 
-            if(posX == texture.getWidth()) {
+            if (posX == texture.getWidth()) {
                 posY++;
                 posX = 0;
             }
         }
+
+        stagePixel.getCamera().translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
 
         texture.dispose();
     }
@@ -106,7 +106,7 @@ public class MainScreen extends GameView {
             palette.add(color);
             return palette.size();
         } else {
-            return findColorNum+1;
+            return findColorNum + 1;
         }
     }
 

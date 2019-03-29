@@ -3,39 +3,42 @@ package me.creese.palette.game.util;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class FontUtil {
-    public static void drawText(Batch batch, BitmapFont font, String text, float x, float y) { {
-        drawText(batch,font,text,x,y,1, Color.WHITE);
+    public static GlyphLayout drawText(Batch batch, BitmapFont font, String text, float x, float y) { {
+        return drawText(batch,font,text,x,y,1, Color.WHITE);
     }}
-    public static void drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color) {
-        drawText(batch,font,text,x,y,scale,color,0,0,false);
+    public static GlyphLayout drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color) {
+        return drawText(batch,font,text,x,y,scale,color,0,0,false);
     }
-    public static void drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
+    public static GlyphLayout drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
                                 float targetWidth, int align) {
-        drawText(batch,font,text,x,y,scale,color,targetWidth,align,false);
+        return drawText(batch,font,text,x,y,scale,color,targetWidth,align,false);
     }
-    public static void drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
+    public static GlyphLayout drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
                                 float targetWidth, int align, boolean isWrap) {
-        drawText(batch,font,text,x,y,scale,color,targetWidth,align,isWrap,0);
+        return drawText(batch,font,text,x,y,scale,color,targetWidth,align,isWrap,0);
     }
-    public static void drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
-                                float targetWidth, int align, boolean isWrap, float targetHeight) {
+    public static GlyphLayout drawText(Batch batch, BitmapFont font, String text, float x, float y, float scale, Color color,
+                                       float targetWidth, int align, boolean isWrap, float targetHeight) {
         font.getData().setScale(scale);
         font.setColor(color);
+        GlyphLayout glyphLayout;
         if(targetHeight > 0) {
             if(targetWidth > 0)
-            font.draw(batch, text, x, y + targetHeight / 2 + (font.getData().getFirstGlyph().height * scale) / 2, targetWidth, align, isWrap);
+                glyphLayout = font.draw(batch, text, x, y + targetHeight / 2 + (font.getData().getFirstGlyph().height * scale) / 2, targetWidth, align, isWrap);
             else
-            font.draw(batch, text, x, y + targetHeight / 2 + (font.getData().getFirstGlyph().height * scale) / 2);
+                glyphLayout = font.draw(batch, text, x, y + targetHeight / 2 + (font.getData().getFirstGlyph().height * scale) / 2);
         }
         else {
             if(targetWidth > 0)
-            font.draw(batch, text, x, y, targetWidth, align, isWrap);
+                glyphLayout = font.draw(batch, text, x, y, targetWidth, align, isWrap);
             else
-            font.draw(batch, text, x, y);
+                glyphLayout = font.draw(batch, text, x, y);
         }
         font.setColor(Color.WHITE);
         font.getData().setScale(1);
+        return glyphLayout;
     }
 }
