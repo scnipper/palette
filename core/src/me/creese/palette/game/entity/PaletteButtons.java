@@ -5,11 +5,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
+import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.util.P;
 
 public class PaletteButtons extends Group {
 
     private boolean isPan;
+    private PaletteButton selectButton;
 
     public PaletteButtons() {
         setBounds(50,80, P.WIDTH,180);
@@ -41,6 +43,14 @@ public class PaletteButtons extends Group {
 
     public boolean isPan() {
         return isPan;
+    }
+
+    public void setSelectButton(PaletteButton selectButton) {
+        this.selectButton = selectButton;
+    }
+
+    public PaletteButton getSelectButton() {
+        return selectButton;
     }
 
     @Override

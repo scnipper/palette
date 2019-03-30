@@ -646,6 +646,18 @@ public class Shapes {
 
     }
 
+    public float getColor() {
+        return color;
+    }
+
+    public float getClearColor() {
+        return clearColor;
+    }
+
+    public Matrix4 getProjMatrix() {
+        return projMatrix;
+    }
+
     public void setProjMatrix(Matrix4 projMatrix) {
         this.projMatrix = projMatrix;
     }

@@ -42,9 +42,9 @@ public class PixelsControl extends Group {
 
                 camera.zoom = (initialDistance / distance) * currZoom;
 
-                if (camera.zoom > 10) camera.zoom = 10;
+                if (camera.zoom > 3) camera.zoom = 3;
 
-                if (camera.zoom < 0.5f) camera.zoom = 0.5f;
+                if (camera.zoom < 0.1f) camera.zoom = 0.1f;
 
             }
 

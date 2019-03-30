@@ -20,6 +20,7 @@ public class PaletteButton extends Actor {
     private final ResForPaletteButtons res;
     private final String text;
     private final BitmapFont font;
+    private boolean isSelect;
 
     public PaletteButton(ResForPaletteButtons res, int num) {
         this.res = res;
@@ -33,15 +34,28 @@ public class PaletteButton extends Actor {
                 PaletteButtons parent = (PaletteButtons) getParent();
                 if (!parent.isPan()) {
 
-                    System.out.println("down palette");
-                }
+                    isSelect = true;
 
+
+                    PaletteButton selectButton = parent.getSelectButton();
+
+                    if (selectButton != null) {
+                        selectButton.setSelect(false);
+                    }
+                    parent.setSelectButton(PaletteButton.this);
+
+                }
 
 
             }
         });
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
+
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
     }
 
     @Override
@@ -53,8 +67,36 @@ public class PaletteButton extends Actor {
         res.circle.setColor(getColor());
         res.circle.draw(batch);
         res.strokeCircle.draw(batch);
-        res.shine.draw(batch);
 
-        FontUtil.drawText(batch,font,text,getX(),getY(),0.7f, Color.WHITE,getWidth(), Align.center,false,getHeight());
+
+
+        if (isSelect) {
+            res.blob.setColor(getColor());
+            res.blob.setPosition(getX() + 5, getY() + 121);
+            res.blob.draw(batch);
+
+            res.blobStroke.setPosition(getX() + 5, getY() + 121);
+            res.blobStroke.draw(batch);
+
+            res.smallBlob.setPosition(getX()+getWidth()/2-res.smallBlob.getWidth()/2,getY()+150);
+            res.smallBlob.draw(batch);
+
+/*            batch.end();
+            shape.setProjMatrix(batch.getProjectionMatrix());
+            float bX = getX()+55;
+            float bY = getY()+200;
+            shape.setColor(getColor());
+            short vert1 = shape.vertexAdd(bX,bY,shape.getColor());
+            short vert2 = shape.vertexAdd(bX+170,bY,shape.getColor());
+            short vert3 = shape.vertexAdd(bX+85,bY+120+(38 *getScaleX()),shape.getColor());
+            shape.indicesAdd(vert1,vert2,vert3);
+            shape.flush();
+            batch.begin();*/
+        } else {
+            res.shine.draw(batch);
+        }
+
+
+        FontUtil.drawText(batch, font, text, getX(), getY(), 0.7f, isSelect ? P.BLACK_FONT_COLOR :Color.WHITE, getWidth(), Align.center, false, getHeight());
     }
 }

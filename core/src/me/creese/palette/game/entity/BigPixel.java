@@ -12,11 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Align;
 
 import me.creese.palette.game.screens.Loading;
+import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 
 public class BigPixel extends Actor {
-    public static final int WIDTH_PIXEL = 128;
-    public static final int HEIGHT_PIXEL = 128;
+    public static final int WIDTH_PIXEL = 32;
+    public static final int HEIGHT_PIXEL = 32;
     private final int numColor;
     private final Color color;
     private final int posX;
@@ -58,7 +59,7 @@ public class BigPixel extends Actor {
     public void setPaint(boolean paint) {
         isPaint = paint;
         if (isPaint) {
-            font.getData().setScale(0.8f);
+            font.getData().setScale(0.2f);
             fontCache.clear();
         }
     }
@@ -66,7 +67,7 @@ public class BigPixel extends Actor {
     public void drawFont(BitmapFontCache fontCache) {
         this.fontCache = fontCache;
         if (!isPaint) {
-            fontCache.addText(text, getX(), getY() + getHeight() / 2 + (font.getData().getFirstGlyph().height * 0.8f) / 2, getWidth(), Align.center, false);
+            fontCache.addText(text, getX(), getY() + getHeight() / 2 + (font.getData().getFirstGlyph().height * 0.2f) / 2, getWidth(), Align.center, false);
         }
 
     }

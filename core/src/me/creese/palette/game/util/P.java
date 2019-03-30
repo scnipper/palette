@@ -2,6 +2,7 @@ package me.creese.palette.game.util;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class P {
     public static final float WIDTH = 1080;
@@ -12,6 +13,7 @@ public class P {
     public static final Color BLACK_FONT_COLOR = new Color(0x2e2e2eff);
     private static P instance;
     public AssetManager asset;
+    public static final SpriteBatch rootBatch = new SpriteBatch();
 
     public static P get() {
         if(instance == null) {

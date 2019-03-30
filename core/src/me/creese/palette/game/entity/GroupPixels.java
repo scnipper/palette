@@ -20,7 +20,7 @@ public class GroupPixels extends Group {
         this.pixelsControl = pixelsControl;
 
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
-        font.getData().setScale(0.8f);
+        font.getData().setScale(0.2f);
         bitmapFontCache = new BitmapFontCache(font);
 
         bitmapFontCache.setColor(P.GRAY_FONT_COLOR);
