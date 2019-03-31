@@ -1,29 +1,24 @@
 package me.creese.palette.game.entity;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.utils.SnapshotArray;
 
-import me.creese.palette.game.screens.Loading;
-import me.creese.palette.game.util.P;
+import me.creese.palette.game.util.FTextures;
+import me.creese.palette.game.util.TexturePrepare;
 
 public class GroupPixels extends Group {
 
     private final PixelsControl pixelsControl;
-    private final BitmapFont font;
-    private BitmapFontCache bitmapFontCache;
 
-    public GroupPixels(PixelsControl pixelsControl) {
+    private final Sprite sprite;
+
+
+    public GroupPixels(PixelsControl pixelsControl, TexturePrepare prepare) {
         this.pixelsControl = pixelsControl;
 
-        font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
-        font.getData().setScale(0.2f);
-        bitmapFontCache = new BitmapFontCache(font);
 
-        bitmapFontCache.setColor(P.GRAY_FONT_COLOR);
+        this.sprite = prepare.getByName(FTextures.PIXEL_SQUARE);
+
 
     }
 
@@ -31,20 +26,48 @@ public class GroupPixels extends Group {
         return pixelsControl;
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        SnapshotArray<Actor> children = getChildren();
+    public Sprite getSprite() {
+        return sprite;
+    }
 
-        if (bitmapFontCache.getLayouts().size == 0) {
+    public void setGridPixels(int[][] gridPixels) {
 
-            for (int i = 0; i < children.size; i++) {
-                BigPixel actor = (BigPixel) children.get(i);
-                actor.drawFont(bitmapFontCache);
+
+
+        /*Pixmap pixmap = new Pixmap(4,4, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.BLACK);
+        pixmap.fill();
+
+        Sprite spritePix = new Sprite(new Texture(pixmap));
+        spritePix.setScale(0.7f);
+
+
+        OrthographicCamera camera = new OrthographicCamera(texture.getWidth()*4,texture.getHeight()*4);
+        camera.translate((texture.getWidth()*4)/2.f,(texture.getHeight()*4)/2.f);
+        camera.update();
+
+
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888,texture.getWidth()*4,texture.getHeight()*4,false);
+
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        fbo.begin();
+        P.rootBatch.setProjectionMatrix(camera.combined);
+        P.rootBatch.begin();
+        for (int i = 0; i < gridPixels.length; i++) {
+            for (int j = 0; j < gridPixels[i].length; j++) {
+                //spritePix.setColor(new Color(gridPixels[i][j]));
+                spritePix.setPosition(j*4,i*4);
+                spritePix.draw(P.rootBatch);
             }
         }
 
 
-        bitmapFontCache.draw(batch);
+
+        P.rootBatch.end();
+        fbo.end();
+        colorBufferTexture = fbo.getColorBufferTexture();*/
+
     }
+
 }

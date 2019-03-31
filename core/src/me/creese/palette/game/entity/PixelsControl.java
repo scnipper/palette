@@ -14,9 +14,9 @@ public class PixelsControl extends Group {
     private float stageX;
     private float stageY;
     private boolean isDown;
-    private BigPixel downPixel;
     private boolean isPan;
     private boolean isZoom;
+    private SquadPixel downPixelSquad;
 
     public PixelsControl(Stage stagePixel) {
         setBounds(0, 0, P.WIDTH, P.HEIGHT);
@@ -42,9 +42,9 @@ public class PixelsControl extends Group {
 
                 camera.zoom = (initialDistance / distance) * currZoom;
 
-                if (camera.zoom > 3) camera.zoom = 3;
+                //if (camera.zoom > 3) camera.zoom = 3;
 
-                if (camera.zoom < 0.1f) camera.zoom = 0.1f;
+                //if (camera.zoom < 0.1f) camera.zoom = 0.1f;
 
             }
 
@@ -53,18 +53,17 @@ public class PixelsControl extends Group {
                 OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
                 currZoom = camera.zoom;
 
-                if (!isPan && !isZoom && downPixel != null) {
-                    downPixel.setPaint(true);
+                if (!isPan && !isZoom && downPixelSquad != null) {
+                    downPixelSquad.touchDown();
                 }
-                downPixel = null;
+                downPixelSquad = null;
                 isZoom = false;
                 isPan = false;
             }
         });
     }
 
-    public void setDownPixel(BigPixel downPixel) {
-        this.downPixel = downPixel;
+    public void setDownPixelSquad(SquadPixel downPixelSquad) {
+        this.downPixelSquad = downPixelSquad;
     }
-
 }

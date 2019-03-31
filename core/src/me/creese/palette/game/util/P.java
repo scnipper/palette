@@ -13,7 +13,7 @@ public class P {
     public static final Color BLACK_FONT_COLOR = new Color(0x2e2e2eff);
     private static P instance;
     public AssetManager asset;
-    public static final SpriteBatch rootBatch = new SpriteBatch();
+    public static final SpriteBatch rootBatch = new SpriteBatch(2000);
 
     public static P get() {
         if(instance == null) {

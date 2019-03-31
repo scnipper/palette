@@ -1,16 +1,16 @@
 package me.creese.palette.game.screens;
 
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import me.creese.palette.game.entity.BigPixel;
@@ -18,6 +18,7 @@ import me.creese.palette.game.entity.GroupPixels;
 import me.creese.palette.game.entity.PaletteButtons;
 import me.creese.palette.game.entity.PixelsControl;
 import me.creese.palette.game.entity.ScoreView;
+import me.creese.palette.game.entity.SquadPixel;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
 import me.creese.palette.game.util.FTextures;
@@ -31,7 +32,6 @@ public class MainScreen extends GameView {
 
     private final Stage stagePixel;
     private final GroupPixels groupPixels;
-    private Sprite sprite;
 
     public MainScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
@@ -48,15 +48,23 @@ public class MainScreen extends GameView {
         PixelsControl pixelsControl = new PixelsControl(stagePixel);
         addActor(pixelsControl);
         addStage(stagePixel, 0);
-        groupPixels = new GroupPixels(pixelsControl);
-        stagePixel.addActor(groupPixels);
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
+        groupPixels = new GroupPixels(pixelsControl, prepare);
+        stagePixel.addActor(groupPixels);
+
+
         addActor(new ScoreView(prepare));
-        Texture texture = new Texture("image_1.gif");
+        Texture texture = new Texture("image_2.gif");
 
-        generatePalette(texture);
+        long start = System.nanoTime();
+        new Thread(() -> {
+            generatePalette(texture);
+            addPalletteButtons();
+        }).start();
 
-        addPalletteButtons();
+
+        System.out.println(System.nanoTime()-start);
+
 
 
     }
@@ -85,54 +93,57 @@ public class MainScreen extends GameView {
         texture.getTextureData().prepare();
         Pixmap pixmap = texture.getTextureData().consumePixmap();
 
-        ByteBuffer pixels = pixmap.getPixels();
-
-        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         BigPixel[][] gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
 
 
-        int posX = 0;
-        int posY = 0;
-        sprite = prepare.getByName(FTextures.PIXEL_SQUARE);
-
-        int remaining = pixels.remaining();
-        for (int i = 0; i < remaining; i += 4) {
-            int color = pixels.get(i) & 0x000000ff;
 
 
-            color = (color << 8) | (pixels.get(i + 1) & 0x000000ff);
-            color = (color << 8) | (pixels.get(i + 2) & 0x000000ff);
-            color = (color << 8) | (pixels.get(i + 3) & 0x000000ff);
+        for (int i = 0; i < texture.getHeight(); i++) {
+            for (int j = 0; j < texture.getWidth(); j++) {
+
+                int color = pixmap.getPixel(j, i);
+                Color colorObj = new Color(color);
+                int numColor = addOrFindColorPalette(colorObj);
 
 
-            Color colorObj = new Color(color);
-            int numColor = addOrFindColorPalette(colorObj);
+                BigPixel bigPixel = new BigPixel(numColor, colorObj, j, i);
 
+                gridPixels[i][j] = bigPixel;
 
-            BigPixel bigPixel = new BigPixel(sprite, numColor, colorObj, posX, posY);
-
-
-            gridPixels[posY][posX] = bigPixel;
-
-
-            groupPixels.addActor(bigPixel);
-
-
-            posX++;
-
-            if (posX == texture.getWidth()) {
-                posY++;
-                posX = 0;
             }
 
-            System.out.println(i / (float) remaining);
         }
 
-        OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
-        camera.zoom = 0.2f;
-        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL*0.2f) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL*0.2f) / 2.f, 0);
+        int xSquadCount = (int) Math.ceil(texture.getWidth() / (float)SquadPixel.WIDTH_SQUAD);
+        int ySquadCount = (int) Math.ceil(texture.getHeight() / (float)SquadPixel.HEIGHT_SQUAD);
 
-        texture.dispose();
+
+                for (int i = 0; i < ySquadCount; i++) {
+                    for (int j = 0; j < xSquadCount; j++) {
+
+
+                        int finalI = i;
+                        int finalJ = j;
+                        Gdx.app.postRunnable(() -> {
+                            SquadPixel squadPixel = new SquadPixel(gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
+                            groupPixels.addActor(squadPixel);
+                        });
+
+                    }
+                }
+
+
+
+
+        //groupPixels.setGridPixels(gridPixels);
+
+        OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
+        //camera.zoom = 0.2f;
+
+        //camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
+
+        Gdx.app.postRunnable(() -> texture.dispose());
+
 
 
     }

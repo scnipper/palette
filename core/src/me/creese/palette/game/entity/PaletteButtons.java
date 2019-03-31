@@ -1,20 +1,29 @@
 package me.creese.palette.game.entity;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.utils.SnapshotArray;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
+import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.P;
 
 public class PaletteButtons extends Group {
+
 
     private boolean isPan;
     private PaletteButton selectButton;
 
     public PaletteButtons() {
         setBounds(50,80, P.WIDTH,180);
+
+
         addListener(new ActorGestureListener(){
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
@@ -52,6 +61,7 @@ public class PaletteButtons extends Group {
     public PaletteButton getSelectButton() {
         return selectButton;
     }
+
 
     @Override
     public void act(float delta) {

@@ -1,6 +1,7 @@
 package me.creese.palette.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
@@ -32,7 +33,7 @@ public class Loading extends GameView {
 
 
     public Loading(PaletteStart root) {
-        super(new FitViewport(P.WIDTH, P.HEIGHT), root);
+        super(new FitViewport(P.WIDTH, P.HEIGHT), root,P.rootBatch);
         addActor(new LogoDraw(root));
         load();
     }
@@ -49,10 +50,11 @@ public class Loading extends GameView {
         paramFont.genMipMaps = true;
         paramFont.magFilter = Texture.TextureFilter.Linear;
         paramFont.minFilter = Texture.TextureFilter.Linear;
+        paramFont.loadedCallback = (assetManager, fileName, type) -> loadFrameTextures();
 
         P.get().asset.load(FONT_ROBOTO_BOLD, BitmapFont.class, paramFont);
 
-        loadFrameTextures();
+
     }
 
     private void loadFrameTextures() {
@@ -105,6 +107,52 @@ public class Loading extends GameView {
                 shape.circle(bX,bY,90);
             }
         });
+        prep.addDraw(FTextures.SCORE_BACK, 400, 120, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                shape.rectRound(bX,bY,400,120,50);
+            }
+        });
+        prep.addDraw(FTextures.BLOB, 170, 158, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
+                short vert2 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
+                short vert3 = shape.vertexAdd(bX+85,bY,shape.getColor());
+                shape.indicesAdd(vert1,vert2,vert3);
+            }
+        });
+        prep.addDraw(FTextures.SMALL_BLOB, 34, 68, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                short vert1 = shape.vertexAdd(bX,bY+32,shape.getColor());
+                short vert2 = shape.vertexAdd(bX+34,bY+32,shape.getColor());
+                short vert3 = shape.vertexAdd(bX+17,bY,shape.getColor());
+                shape.indicesAdd(vert1,vert2,vert3);
+                shape.setSmooth(0);
+                shape.circle(bX,bY+20.2f,17);
+                shape.setSmooth(1.5f);
+            }
+        });
+        prep.addDraw(FTextures.BLOB_STROKE, 170, 158, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
+                short vert2 = shape.vertexAdd(bX+12,bY+158,shape.getColor());
+                short vert3 = shape.vertexAdd(bX+85,bY+24,shape.getColor());
+                short vert4 = shape.vertexAdd(bX+85,bY,shape.getColor());
+
+
+                short vert5 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
+                short vert6 = shape.vertexAdd(bX+158,bY+158,shape.getColor());
+
+
+                shape.indicesAdd(vert1,vert2,vert3,
+                        vert1,vert3,vert4,
+                        vert3,vert6,vert5,
+                        vert4,vert3,vert5);
+            }
+        });
 
         prep.start();
 
@@ -135,9 +183,8 @@ public class Loading extends GameView {
             addAction(sequence);
 
             setColor(clearColor);
-            //splash.setColor(getColor());
             splash.setPosition(P.WIDTH / 2 - (splash.getWidth() / 2), P.HEIGHT / 2 - (splash.getHeight() / 2));
-            ///splash.setColor(P.TOP_MENU_COLOR);
+
         }
 
         @Override
