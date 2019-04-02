@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -21,7 +19,6 @@ import me.creese.palette.game.entity.ScoreView;
 import me.creese.palette.game.entity.SquadPixel;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
-import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
@@ -32,6 +29,7 @@ public class MainScreen extends GameView {
 
     private final Stage stagePixel;
     private final GroupPixels groupPixels;
+    private final PixelsControl pixelsControl;
 
     public MainScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
@@ -45,7 +43,7 @@ public class MainScreen extends GameView {
                 //System.out.println(((SpriteBatch) stagePixel.getBatch()).renderCalls);
             }
         };
-        PixelsControl pixelsControl = new PixelsControl(stagePixel);
+        pixelsControl = new PixelsControl(stagePixel);
         addActor(pixelsControl);
         addStage(stagePixel, 0);
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
@@ -54,7 +52,7 @@ public class MainScreen extends GameView {
 
 
         addActor(new ScoreView(prepare));
-        Texture texture = new Texture("image_2.gif");
+        Texture texture = new Texture("image_1.gif");
 
         long start = System.nanoTime();
         new Thread(() -> {
@@ -63,8 +61,7 @@ public class MainScreen extends GameView {
         }).start();
 
 
-        System.out.println(System.nanoTime()-start);
-
+        System.out.println(System.nanoTime() - start);
 
 
     }
@@ -96,8 +93,6 @@ public class MainScreen extends GameView {
         BigPixel[][] gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
 
 
-
-
         for (int i = 0; i < texture.getHeight(); i++) {
             for (int j = 0; j < texture.getWidth(); j++) {
 
@@ -114,25 +109,25 @@ public class MainScreen extends GameView {
 
         }
 
-        int xSquadCount = (int) Math.ceil(texture.getWidth() / (float)SquadPixel.WIDTH_SQUAD);
-        int ySquadCount = (int) Math.ceil(texture.getHeight() / (float)SquadPixel.HEIGHT_SQUAD);
+        int xSquadCount = (int) Math.ceil(texture.getWidth() / (float) SquadPixel.WIDTH_SQUAD);
+        int ySquadCount = (int) Math.ceil(texture.getHeight() / (float) SquadPixel.HEIGHT_SQUAD);
 
 
-                for (int i = 0; i < ySquadCount; i++) {
-                    for (int j = 0; j < xSquadCount; j++) {
+        for (int i = 0; i < ySquadCount; i++) {
+            for (int j = 0; j < xSquadCount; j++) {
 
 
-                        int finalI = i;
-                        int finalJ = j;
-                        Gdx.app.postRunnable(() -> {
-                            SquadPixel squadPixel = new SquadPixel(gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
-                            groupPixels.addActor(squadPixel);
-                        });
+                int finalI = i;
+                int finalJ = j;
+                Gdx.app.postRunnable(() -> {
+                    SquadPixel squadPixel = new SquadPixel(gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
+                    groupPixels.addActor(squadPixel);
+                });
 
-                    }
-                }
+            }
+        }
 
-
+        pixelsControl.setRealSize(texture.getWidth()*BigPixel.WIDTH_PIXEL,texture.getHeight()*BigPixel.HEIGHT_PIXEL);
 
 
         //groupPixels.setGridPixels(gridPixels);
@@ -143,7 +138,6 @@ public class MainScreen extends GameView {
         //camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
 
         Gdx.app.postRunnable(() -> texture.dispose());
-
 
 
     }

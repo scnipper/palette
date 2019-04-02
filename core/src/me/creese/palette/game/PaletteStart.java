@@ -30,6 +30,6 @@ public class PaletteStart extends Display {
     @Override
     public void render() {
         super.render();
-        Gdx.app.log("FPS", String.valueOf(1/ Gdx.graphics.getDeltaTime()));
+        //Gdx.app.log("FPS", String.valueOf(1/ Gdx.graphics.getDeltaTime()));
     }
 }

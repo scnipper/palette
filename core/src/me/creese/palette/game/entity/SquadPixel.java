@@ -48,7 +48,7 @@ public class SquadPixel extends Actor {
         setBounds(arrX * BigPixel.WIDTH_PIXEL, P.HEIGHT - arrY * BigPixel.HEIGHT_PIXEL, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD, BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD);
 
         moveBy(0, -getHeight());
-        setDebug(true);
+        //setDebug(true);
         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) getWidth(), (int) getHeight(), false) {
             @Override
             protected Texture createTexture(FrameBufferTextureAttachmentSpec attachmentSpec) {
