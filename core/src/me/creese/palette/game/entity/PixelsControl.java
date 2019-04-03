@@ -25,6 +25,7 @@ public class PixelsControl extends Group {
     private int realHeight;
     private boolean isMaxZoom;
     private boolean isMoveToMaxZoom;
+    private float zoomMax;
 
     public PixelsControl(Stage stagePixel) {
         setBounds(0, 0, P.WIDTH, P.HEIGHT);
@@ -52,20 +53,12 @@ public class PixelsControl extends Group {
             public void zoom(InputEvent event, float initialDistance, float distance) {
                 OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
 
-                isZoom = true;
                 camera.zoom = (initialDistance / distance) * currZoom;
 
-                float zoomMax = (realWidth + MARGIN * 2) / (P.WIDTH);
-                if (camera.zoom > zoomMax) {
+                isZoom = true;
 
 
-                    isMaxZoom = true;
-                    camera.zoom = zoomMax;
-                } else {
-                    isMaxZoom = false;
-                    isMoveToMaxZoom = false;
-
-                }
+                checkCameraZoom();
 
 
                 if (camera.zoom < 0.2f) camera.zoom = 0.2f;
@@ -75,6 +68,7 @@ public class PixelsControl extends Group {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
+
 
                 if (!isPan && !isZoom && downPixelSquad != null) {
                     downPixelSquad.touchDown();
@@ -107,6 +101,17 @@ public class PixelsControl extends Group {
                 }
             }
         });
+    }
+
+    private void checkCameraZoom() {
+        if (camera.zoom > zoomMax) {
+            isMaxZoom = true;
+            camera.zoom = zoomMax;
+        } else {
+            isMaxZoom = false;
+            isMoveToMaxZoom = false;
+
+        }
     }
 
     private void boundPos(boolean isPan) {
@@ -169,6 +174,10 @@ public class PixelsControl extends Group {
     public void setRealSize(int realWidth, int realHeight) {
         this.realWidth = realWidth;
         this.realHeight = realHeight;
+
+        zoomMax = (realWidth + MARGIN * 2) / (P.WIDTH);
+        checkCameraZoom();
+        if(isMaxZoom) boundPos(false);
     }
 
     @Override

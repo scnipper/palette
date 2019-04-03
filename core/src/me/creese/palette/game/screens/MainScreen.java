@@ -52,7 +52,7 @@ public class MainScreen extends GameView {
 
 
         addActor(new ScoreView(prepare));
-        Texture texture = new Texture("image_1.gif");
+        Texture texture = new Texture("image_2.gif");
 
         long start = System.nanoTime();
         new Thread(() -> {
