@@ -5,30 +5,25 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.TexturePrepare;
+import me.creese.util.display.Display;
 
 public class GroupPixels extends Group {
 
-    private final PixelsControl pixelsControl;
 
-    private final Sprite sprite;
+    private final Display root;
+    private Sprite sprite;
 
-
-    public GroupPixels(PixelsControl pixelsControl, TexturePrepare prepare) {
-        this.pixelsControl = pixelsControl;
-
-
-        this.sprite = prepare.getByName(FTextures.PIXEL_SQUARE);
-
+    public GroupPixels(Display root) {
+        this.root = root;
+        sprite = root.getTransitObject(TexturePrepare.class).getByName(FTextures.PIXEL_SQUARE);
 
     }
 
-    public PixelsControl getPixelsControl() {
-        return pixelsControl;
+    public Display getRoot() {
+        return root;
     }
 
     public Sprite getSprite() {
         return sprite;
     }
-
-
 }

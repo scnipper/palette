@@ -21,9 +21,12 @@ import com.badlogic.gdx.utils.Align;
 
 import java.lang.reflect.Field;
 
+import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.screens.Loading;
+import me.creese.palette.game.screens.MainScreen;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
+import me.creese.util.display.Display;
 
 public class SquadPixel extends Actor {
 
@@ -35,13 +38,15 @@ public class SquadPixel extends Actor {
     private final int arrX;
     private final int arrY;
     private final BitmapFont font;
+    private final Display root;
     private Sprite sprite;
     private TextureRegion bufferTexture;
     private float downX;
     private float downY;
     private OrthographicCamera stageCamera;
 
-    public SquadPixel(BigPixel[][] gridPixels, int arrX, int arrY) {
+    public SquadPixel(Display root, BigPixel[][] gridPixels, int arrX, int arrY) {
+        this.root = root;
         this.gridPixels = gridPixels;
         this.arrX = arrX;
         this.arrY = arrY;
@@ -84,7 +89,7 @@ public class SquadPixel extends Actor {
         addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ((GroupPixels) getParent()).getPixelsControl().setDownPixelSquad(SquadPixel.this);
+                root.getGameViewForName(MainScreen.class).getPixelsControl().setDownPixelSquad(SquadPixel.this);
                 downX = x;
                 downY = y;
                 return false;
@@ -96,8 +101,7 @@ public class SquadPixel extends Actor {
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
     }
 
-    public void redrawSquad() {
-        //System.out.println("redraw");
+    public void redrawAllSquad() {
         SpriteBatch rootBatch = P.rootBatch;
         frameBuffer.begin();
 
@@ -114,48 +118,104 @@ public class SquadPixel extends Actor {
             for (int j = 0; j < WIDTH_SQUAD; j++) {
                 if (j + arrX >= gridPixels[i].length) break;
 
-                sprite.setPosition(j * BigPixel.WIDTH_PIXEL, ((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL) - i * BigPixel.HEIGHT_PIXEL) - BigPixel.HEIGHT_PIXEL);
-                BigPixel bigPixel = gridPixels[i + arrY][j + arrX];
-
-                switch (bigPixel.getState()) {
-                    case PAINT:
-                        sprite.setScale(1);
-                        sprite.setColor(bigPixel.getColor());
-                        sprite.draw(rootBatch);
-                        break;
-                    case NOT_PAINT:
-                        sprite.setColor(Color.WHITE);
-                        sprite.setScale(0.93f);
-                        sprite.draw(rootBatch);
-
-                        FontUtil.drawText(rootBatch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), 0.2f, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
-
-                        break;
-                }
-
-
+                drawOnePixel(j,i,rootBatch);
             }
         }
         rootBatch.end();
 
-        Texture colorBufferTexture = frameBuffer.getColorBufferTexture();
-        bufferTexture = new TextureRegion(colorBufferTexture);
-        bufferTexture.flip(false, true);
-        frameBuffer.end();
+        createTexture();
 
         if (beginAfter) rootBatch.begin();
     }
 
+    private void createTexture() {
+        Texture colorBufferTexture = frameBuffer.getColorBufferTexture();
+        bufferTexture = new TextureRegion(colorBufferTexture);
+        bufferTexture.flip(false, true);
+        frameBuffer.end();
+    }
+
+    public void redrawOnePixel(int x,int y) {
+        SpriteBatch rootBatch = P.rootBatch;
+        frameBuffer.begin();
+
+        rootBatch.setProjectionMatrix(camera.combined);
+        boolean beginAfter = false;
+        if (rootBatch.isDrawing()) {
+            rootBatch.end();
+            beginAfter = true;
+        }
+        rootBatch.begin();
+
+        drawOnePixel(x-arrX,y-arrY,rootBatch);
+
+        rootBatch.end();
+
+        createTexture();
+
+        if (beginAfter) rootBatch.begin();
+    }
+
+    private void drawOnePixel(int x, int y,Batch batch) {
+
+        sprite.setPosition(x * BigPixel.WIDTH_PIXEL, ((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL)
+                - y * BigPixel.HEIGHT_PIXEL) - BigPixel.HEIGHT_PIXEL);
+        BigPixel bigPixel = gridPixels[y + arrY][x + arrX];
+
+        switch (bigPixel.getState()) {
+            case PAINT:
+                sprite.setScale(1);
+                sprite.setColor(bigPixel.getColor());
+                sprite.draw(batch);
+                break;
+            case NOT_PAINT:
+                sprite.setColor(Color.WHITE);
+                sprite.setScale(0.95f);
+                sprite.draw(batch);
+
+                FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), 0.2f, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
+
+                break;
+            case WRONG_PAINT:
+                sprite.setScale(1);
+                sprite.setColor(P.BACKGROUND_COLOR);
+                sprite.draw(batch);
+                sprite.setColor(Color.WHITE);
+                sprite.setScale(0.95f);
+                sprite.draw(batch);
+
+                FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), 0.2f, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
+
+                sprite.setScale(1);
+                sprite.setColor(bigPixel.getWrongColor());
+                sprite.draw(batch);
+
+                break;
+        }
+    }
+
     public void touchDown() {
-        //System.out.println("touch down squad  "+downX+" "+downY);
+
+        PaletteButton selectButton = root.getGameViewForName(MainScreen.class).getPaletteButtons().getSelectButton();
+
+
 
         int indX = (int) (downX / BigPixel.WIDTH_PIXEL) + arrX;
         int indY = (int) (((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL) - downY) / BigPixel.HEIGHT_PIXEL) + arrY;
 
         if (indY < gridPixels.length) {
             if (indX < gridPixels[indY].length) {
-                gridPixels[indY][indX].setState(BigPixel.State.PAINT);
-                redrawSquad();
+                BigPixel bigPixel = gridPixels[indY][indX];
+
+                if(selectButton.getNum() == bigPixel.getNumColor()) {
+                    bigPixel.setState(BigPixel.State.PAINT);
+                } else {
+                    bigPixel.setState(BigPixel.State.WRONG_PAINT);
+                    Color color = selectButton.getColor().cpy();
+                    color.a = 0.5f;
+                    bigPixel.setWrongColor(color);
+                }
+                redrawOnePixel(indX,indY);
             }
         }
 
@@ -163,19 +223,19 @@ public class SquadPixel extends Actor {
     }
 
     private boolean boundsScreen() {
-
-
         float zoom = stageCamera.zoom;
-        float xToCamera = ((stageCamera.position.x - (P.WIDTH * zoom) / 2) - getX()) * -1;
-        float yToCamera = (stageCamera.position.y - (P.HEIGHT * zoom) / 2) - (getY() - (P.HEIGHT * zoom));
 
-        return xToCamera > -getWidth() * 2 * zoom && xToCamera < P.WIDTH * zoom && yToCamera > -getHeight() * 2 * zoom && yToCamera < (P.HEIGHT + getHeight()) * zoom;
+        float xToCamera = (stageCamera.position.x - P.WIDTH/2 * zoom) * -1;
+        float yToCamera = (stageCamera.position.y - (P.HEIGHT * zoom) / 2) - (getY() - (P.HEIGHT * zoom)) ;
+
+        xToCamera+= getX();
+        return xToCamera > -getWidth() && xToCamera < P.WIDTH*zoom && yToCamera > 0 && yToCamera < P.HEIGHT*zoom+getHeight();
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (bufferTexture != null) {
-            //if(boundsScreen())
+            if(boundsScreen())
             batch.draw(bufferTexture, getX(), getY());
         }
     }
@@ -186,8 +246,7 @@ public class SquadPixel extends Actor {
         if (parent != null) {
             stageCamera = (OrthographicCamera) parent.getStage().getCamera();
             sprite = ((GroupPixels) parent).getSprite();
-            //if(boundsScreen())
-            redrawSquad();
+            redrawAllSquad();
         }
     }
 }

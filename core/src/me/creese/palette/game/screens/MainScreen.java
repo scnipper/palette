@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -30,6 +31,7 @@ public class MainScreen extends GameView {
     private final Stage stagePixel;
     private final GroupPixels groupPixels;
     private final PixelsControl pixelsControl;
+    private PaletteButtons paletteButtons;
 
     public MainScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
@@ -46,11 +48,11 @@ public class MainScreen extends GameView {
         pixelsControl = new PixelsControl(stagePixel);
         addActor(pixelsControl);
         addStage(stagePixel, 0);
-        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
-        groupPixels = new GroupPixels(pixelsControl, prepare);
+        groupPixels = new GroupPixels(root);
         stagePixel.addActor(groupPixels);
 
 
+        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         addActor(new ScoreView(prepare));
         Texture texture = new Texture("image_2.gif");
 
@@ -68,13 +70,18 @@ public class MainScreen extends GameView {
 
     private void addPalletteButtons() {
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
-        PaletteButtons paletteButtons = new PaletteButtons();
+        paletteButtons = new PaletteButtons();
         addActor(paletteButtons);
+
 
         ResForPaletteButtons res = new ResForPaletteButtons(prepare);
         for (int i = 0; i < palette.size(); i++) {
             Color color = palette.get(i);
             PaletteButton button = new PaletteButton(res, i + 1);
+            if(i == 0) {
+                button.setSelect(true);
+                paletteButtons.setSelectButton(button);
+            }
             button.setColor(color);
             float w = button.getWidth() + 40;
             button.setX(w * i);
@@ -120,7 +127,7 @@ public class MainScreen extends GameView {
                 int finalI = i;
                 int finalJ = j;
                 Gdx.app.postRunnable(() -> {
-                    SquadPixel squadPixel = new SquadPixel(gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
+                    SquadPixel squadPixel = new SquadPixel(getRoot(),gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
                     groupPixels.addActor(squadPixel);
                 });
 
@@ -133,7 +140,7 @@ public class MainScreen extends GameView {
         //groupPixels.setGridPixels(gridPixels);
 
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
-        //camera.zoom = 0.2f;
+        camera.zoom = 0.4f;
 
         //camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
 
@@ -152,4 +159,11 @@ public class MainScreen extends GameView {
         }
     }
 
+    public PixelsControl getPixelsControl() {
+        return pixelsControl;
+    }
+
+    public PaletteButtons getPaletteButtons() {
+        return paletteButtons;
+    }
 }

@@ -10,11 +10,13 @@ public class BigPixel {
     private final int posX;
     private final int posY;
     private State state;
+    private Color wrongColor;
+
+
 
     public enum State {
-        PAINT,NOT_PAINT,WRONG_PAINT
+        PAINT,NOT_PAINT,WRONG_PAINT;
     }
-
     public BigPixel(int numColor, Color color, int posX, int posY) {
 
         this.numColor = numColor;
@@ -29,6 +31,14 @@ public class BigPixel {
 
     public State getState() {
         return state;
+    }
+
+    public void setWrongColor(Color wrongColor) {
+        this.wrongColor = wrongColor;
+    }
+
+    public Color getWrongColor() {
+        return wrongColor;
     }
 
     public void setState(State state) {

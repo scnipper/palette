@@ -22,11 +22,13 @@ public class PaletteButton extends Actor {
     private final ResForPaletteButtons res;
     private final String text;
     private final BitmapFont font;
+    private final int num;
     private boolean isSelect;
 
     public PaletteButton(ResForPaletteButtons res, int num) {
         this.res = res;
         text = String.valueOf(num);
+        this.num = num;
         setWidth(res.circle.getWidth());
         setHeight(res.circle.getHeight());
 
@@ -56,10 +58,14 @@ public class PaletteButton extends Actor {
 
     }
 
+
     public void setSelect(boolean select) {
         isSelect = select;
     }
 
+    public int getNum() {
+        return num;
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
