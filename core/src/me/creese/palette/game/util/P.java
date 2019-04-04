@@ -1,5 +1,6 @@
 package me.creese.palette.game.util;
 
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,10 +14,18 @@ public class P {
     public static final Color BLACK_FONT_COLOR = new Color(0x2e2e2eff);
 
 
+    public static final int COUNT_IMAGES = 4;
     public static final float START_ZOOM = 0.4f;
     private static P instance;
     public AssetManager asset;
-    public static final SpriteBatch rootBatch = new SpriteBatch(2000);
+    public static final SpriteBatch rootBatch = new SpriteBatch(2000){
+        @Override
+        public void end() {
+            super.end();
+            //System.out.println(renderCalls);
+        }
+    };
+    public Preferences saves;
 
     public static P get() {
         if(instance == null) {

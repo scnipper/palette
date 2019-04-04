@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.Align;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.screens.Loading;
-import me.creese.palette.game.screens.MainScreen;
+import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.util.display.Display;
@@ -73,7 +73,7 @@ public class SquadPixel extends Actor {
         addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                root.getGameViewForName(MainScreen.class).getPixelsControl().setDownPixelSquad(SquadPixel.this);
+                root.getGameViewForName(GameScreen.class).getPixelsControl().setDownPixelSquad(SquadPixel.this);
                 downX = x;
                 downY = y;
                 return false;
@@ -182,7 +182,7 @@ public class SquadPixel extends Actor {
 
     public void touchDown() {
 
-        PaletteButton selectButton = root.getGameViewForName(MainScreen.class).getPaletteButtons().getSelectButton();
+        PaletteButton selectButton = root.getGameViewForName(GameScreen.class).getPaletteButtons().getSelectButton();
 
 
         int indX = (int) (downX / BigPixel.WIDTH_PIXEL) + arrX;

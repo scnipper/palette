@@ -162,6 +162,15 @@ public class Loading extends GameView {
                         vert4,vert3,vert5);
             }
         });
+        prep.addDraw(FTextures.CLOSED_ICON, 128, 128, (bX, bY) -> {
+            shape.circleLine(bX,bY, 64,20);
+            shape.setSmooth(0);
+            shape.line(bX+28,bY+100,bX+100,bY+28,20);
+            shape.setSmooth(1.5f);
+        });
+        prep.addDraw(FTextures.SELECT_IMAGE, 200, 300, (bX, bY) -> {
+            shape.rectRound(bX,bY,200,300,20);
+        });
 
         prep.start();
 

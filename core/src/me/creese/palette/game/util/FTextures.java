@@ -10,4 +10,6 @@ public class FTextures {
     public static final int BLOB_STROKE         = 1007;
     public static final int SMALL_BLOB          = 1008;
     public static final int SCORE_BACK_SHADOW   = 1009;
+    public static final int CLOSED_ICON         = 1010;
+    public static final int SELECT_IMAGE        = 1011;
 }
