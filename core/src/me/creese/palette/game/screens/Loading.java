@@ -36,7 +36,7 @@ public class Loading extends GameView {
     public Loading(PaletteStart root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root,P.rootBatch);
         addActor(new LogoDraw(root));
-        loadFrameTextures();
+        load();
     }
 
     private void load() {
@@ -55,11 +55,11 @@ public class Loading extends GameView {
 
         BitmapFontLoader.BitmapFontParameter paramFont2 = new BitmapFontLoader.BitmapFontParameter();
         paramFont2.genMipMaps = true;
-        //paramFont2.loadedCallback = (assetManager, fileName, type) -> loadFrameTextures();
+
 
         P.get().asset.load(FONT_ROBOTO_BOLD, BitmapFont.class, paramFont);
         P.get().asset.load(FONT_PIXEL_NUM, BitmapFont.class,paramFont2);
-        //loadFrameTextures();
+        loadFrameTextures();
 
 
     }
@@ -81,7 +81,6 @@ public class Loading extends GameView {
             @Override
             public void drawPost() {
                 shape.flush();
-                load();
             }
         });
         shape.setProjMatrix(prep.getCamera().combined);

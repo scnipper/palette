@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.util.FTextures;
@@ -18,15 +15,11 @@ import me.creese.util.display.Display;
 public class SelectImage extends Actor {
 
     private final Display root;
-    private Sprite texture;
     private final Sprite back;
     private final Sprite closedIcon;
     private final int numImage;
+    private Sprite texture;
     private State state;
-
-    public enum State {
-        LOCK,OPEN,UNLOCK
-    }
 
     public SelectImage(Display root, int numImage) {
         this.numImage = numImage;
@@ -39,11 +32,10 @@ public class SelectImage extends Actor {
         closedIcon.setColor(Color.RED);
 
 
-
-        if(texture.getWidth() >= texture.getHeight()) {
-            texture.setScale(back.getWidth()/texture.getWidth());
+        if (texture.getWidth() >= texture.getHeight()) {
+            texture.setScale(back.getWidth() / texture.getWidth());
         } else {
-            texture.setScale((back.getHeight()-50)/texture.getHeight());
+            texture.setScale((back.getHeight() - 50) / texture.getHeight());
         }
 
         setWidth(back.getWidth());
@@ -56,15 +48,15 @@ public class SelectImage extends Actor {
         setState(State.LOCK);
 
     }
+
     public void selectImage() {
-        System.out.println("select image "+numImage);
-        if(state.equals(State.OPEN) || state.equals(State.UNLOCK)) {
+        //if (state.equals(State.OPEN) || state.equals(State.UNLOCK)) {
 
             ((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
 
             root.showGameView(GameScreen.class);
             root.getGameViewForName(GameScreen.class).startGame(texture.getTexture());
-        }
+        //}
     }
 
     public void loadTexture() {
@@ -74,7 +66,7 @@ public class SelectImage extends Actor {
         }
 
         texture.setTexture(new Texture("images/image_" + numImage + ".gif"));
-        texture.setOrigin(0,0);
+        texture.setOrigin(0, 0);
     }
 
     public void setState(State state) {
@@ -98,21 +90,19 @@ public class SelectImage extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        back.setPosition(getX(),getY());
+        back.setPosition(getX(), getY());
         back.draw(batch);
-        switch (state){
+        switch (state) {
             case LOCK:
-                closedIcon.setPosition(getX()+getWidth()/2-closedIcon.getWidth()/2,getY()+getHeight()/2-closedIcon.getHeight()/2);
+                closedIcon.setPosition(getX() + getWidth() / 2 - closedIcon.getWidth() / 2, getY() + getHeight() / 2 - closedIcon.getHeight() / 2);
                 closedIcon.draw(batch);
                 break;
             case OPEN:
-                texture.setPosition(getX()+getWidth()/2- (texture.getWidth()*texture.getScaleX())/2,
-                        getY()+getHeight()/2-(texture.getHeight()*texture.getScaleY())/2);
+                texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
                 texture.draw(batch);
                 break;
             case UNLOCK:
-                texture.setPosition(getX()+getWidth()/2- (texture.getWidth()*texture.getScaleX())/2,
-                        getY()+getHeight()/2-(texture.getHeight()*texture.getScaleY())/2);
+                texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
                 texture.draw(batch);
                 back.setColor(getColor());
                 back.draw(batch);
@@ -121,9 +111,9 @@ public class SelectImage extends Actor {
         }
 
 
+    }
 
-
-
-
+    public enum State {
+        LOCK, OPEN, UNLOCK
     }
 }

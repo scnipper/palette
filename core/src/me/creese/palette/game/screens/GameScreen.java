@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import me.creese.palette.game.entity.BigPixel;
 import me.creese.palette.game.entity.GroupPixels;
+import me.creese.palette.game.entity.LoadingActor;
 import me.creese.palette.game.entity.PaletteButtons;
 import me.creese.palette.game.entity.PixelsControl;
 import me.creese.palette.game.entity.ScoreView;
@@ -32,12 +33,20 @@ public class GameScreen extends GameView {
     private final GroupPixels groupPixels;
     private final PixelsControl pixelsControl;
     private final ScoreView scoreView;
+    private final LoadingActor loadingActor;
     private PaletteButtons paletteButtons;
+    private int xSquadCount;
+    private int ySquadCount;
+    private boolean isStartLoading;
+    private int xCurrSquad;
+    private int yCurrSquad;
+    private BigPixel[][] gridPixels;
 
     public GameScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
         palette = new ArrayList<>();
 
+        loadingActor = new LoadingActor();
 
         stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.rootBatch) {
             @Override
@@ -63,10 +72,11 @@ public class GameScreen extends GameView {
 
 
     public void startGame(Texture texture) {
-        new Thread(() -> {
-            generatePalette(texture);
-            addPalletteButtons();
-        }).start();
+
+        pixelsControl.setTouchable(Touchable.disabled);
+        addActor(loadingActor);
+        generatePalette(texture);
+        addPalletteButtons();
     }
 
     private void addPalletteButtons() {
@@ -79,7 +89,7 @@ public class GameScreen extends GameView {
         for (int i = 0; i < palette.size(); i++) {
             Color color = palette.get(i);
             PaletteButton button = new PaletteButton(res, i + 1);
-            if(i == 0) {
+            if (i == 0) {
                 button.setSelect(true);
                 paletteButtons.setSelectButton(button);
             }
@@ -95,12 +105,12 @@ public class GameScreen extends GameView {
     private void generatePalette(Texture texture) {
 
 
-        scoreView.setTotalPixels(texture.getWidth()*texture.getHeight());
+        scoreView.setTotalPixels(texture.getWidth() * texture.getHeight());
 
         texture.getTextureData().prepare();
         Pixmap pixmap = texture.getTextureData().consumePixmap();
 
-        BigPixel[][] gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
+        gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
 
 
         for (int i = 0; i < texture.getHeight(); i++) {
@@ -119,35 +129,22 @@ public class GameScreen extends GameView {
 
         }
 
-        int xSquadCount = (int) Math.ceil(texture.getWidth() / (float) SquadPixel.WIDTH_SQUAD);
-        int ySquadCount = (int) Math.ceil(texture.getHeight() / (float) SquadPixel.HEIGHT_SQUAD);
+        xCurrSquad = 0;
+        yCurrSquad = 0;
+        xSquadCount = (int) Math.ceil(texture.getWidth() / (float) SquadPixel.WIDTH_SQUAD);
+        ySquadCount = (int) Math.ceil(texture.getHeight() / (float) SquadPixel.HEIGHT_SQUAD);
 
+        isStartLoading = true;
 
-        for (int i = 0; i < ySquadCount; i++) {
-            for (int j = 0; j < xSquadCount; j++) {
-
-
-                int finalJ = j;
-                int finalI = i;
-                Gdx.app.postRunnable(() -> {
-                    SquadPixel squadPixel = new SquadPixel(getRoot(),gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
-                    groupPixels.addActor(squadPixel);
-                });
-
-            }
-        }
-
-        pixelsControl.setRealSize(texture.getWidth()*BigPixel.WIDTH_PIXEL,texture.getHeight()*BigPixel.HEIGHT_PIXEL);
-
-
-        //groupPixels.setGridPixels(gridPixels);
+        pixelsControl.setRealSize(texture.getWidth() * BigPixel.WIDTH_PIXEL, texture.getHeight() * BigPixel.HEIGHT_PIXEL);
 
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
 
-        //camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
+        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL*camera.zoom) / 2.f,
+                -(texture.getHeight() * BigPixel.HEIGHT_PIXEL *camera.zoom) / 2.f, 0);
 
-        Gdx.app.postRunnable(() -> texture.dispose());
+        texture.dispose();
 
 
     }
@@ -160,6 +157,29 @@ public class GameScreen extends GameView {
         } else {
             return findColorNum + 1;
         }
+    }
+
+    @Override
+    protected void postRender() {
+        if(isStartLoading) {
+            SquadPixel squadPixel = new SquadPixel(getRoot(), gridPixels, xCurrSquad * SquadPixel.WIDTH_SQUAD,
+                    yCurrSquad * SquadPixel.HEIGHT_SQUAD);
+            groupPixels.addActor(squadPixel);
+
+            xCurrSquad++;
+
+            loadingActor.setPercent((yCurrSquad*xSquadCount + xSquadCount) / ((float)xSquadCount * ySquadCount));
+            if(xCurrSquad == xSquadCount) {
+                xCurrSquad = 0;
+                yCurrSquad++;
+                if(yCurrSquad == ySquadCount) {
+                    isStartLoading = false;
+                    loadingActor.remove();
+                    pixelsControl.setTouchable(Touchable.enabled);
+                }
+            }
+        }
+
     }
 
     public PixelsControl getPixelsControl() {
