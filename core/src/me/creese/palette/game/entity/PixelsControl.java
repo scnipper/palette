@@ -17,7 +17,7 @@ public class PixelsControl extends Group {
     private static final float MARGIN = 150;
     private final Actor moveActor;
     private final OrthographicCamera camera;
-    private float currZoom = 1;
+    private float currZoom = P.START_ZOOM;
     private boolean isPan;
     private boolean isZoom;
     private SquadPixel downPixelSquad;
@@ -26,6 +26,7 @@ public class PixelsControl extends Group {
     private boolean isMaxZoom;
     private boolean isMoveToMaxZoom;
     private float zoomMax;
+    private boolean isDoubleTap;
 
     public PixelsControl(Stage stagePixel) {
         setBounds(0, 0, P.WIDTH, P.HEIGHT);
@@ -34,6 +35,12 @@ public class PixelsControl extends Group {
         moveActor = new Actor();
         addActor(moveActor);
         addListener(new ActorGestureListener() {
+
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+
+                if(count >= 2) isDoubleTap = true;
+            }
 
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
@@ -69,6 +76,7 @@ public class PixelsControl extends Group {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
 
+                System.out.println("touch up "+isDoubleTap);
 
                 if (!isPan && !isZoom && downPixelSquad != null) {
                     downPixelSquad.touchDown();
@@ -88,6 +96,7 @@ public class PixelsControl extends Group {
 
                 isZoom = false;
                 isPan = false;
+                isDoubleTap = false;
 
 
             }

@@ -31,6 +31,7 @@ public class MainScreen extends GameView {
     private final Stage stagePixel;
     private final GroupPixels groupPixels;
     private final PixelsControl pixelsControl;
+    private final ScoreView scoreView;
     private PaletteButtons paletteButtons;
 
     public MainScreen(Display root) {
@@ -53,8 +54,10 @@ public class MainScreen extends GameView {
 
 
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
-        addActor(new ScoreView(prepare));
-        Texture texture = new Texture("image_2.gif");
+        scoreView = new ScoreView(prepare);
+        getRoot().addTransitObject(scoreView);
+        addActor(scoreView);
+        Texture texture = new Texture("image_1.gif");
 
         long start = System.nanoTime();
         new Thread(() -> {
@@ -94,6 +97,8 @@ public class MainScreen extends GameView {
     private void generatePalette(Texture texture) {
 
 
+        scoreView.setTotalPixels(texture.getWidth()*texture.getHeight());
+
         texture.getTextureData().prepare();
         Pixmap pixmap = texture.getTextureData().consumePixmap();
 
@@ -124,8 +129,8 @@ public class MainScreen extends GameView {
             for (int j = 0; j < xSquadCount; j++) {
 
 
-                int finalI = i;
                 int finalJ = j;
+                int finalI = i;
                 Gdx.app.postRunnable(() -> {
                     SquadPixel squadPixel = new SquadPixel(getRoot(),gridPixels, finalJ * SquadPixel.WIDTH_SQUAD, finalI * SquadPixel.HEIGHT_SQUAD);
                     groupPixels.addActor(squadPixel);
@@ -140,7 +145,7 @@ public class MainScreen extends GameView {
         //groupPixels.setGridPixels(gridPixels);
 
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
-        camera.zoom = 0.4f;
+        camera.zoom = P.START_ZOOM;
 
         //camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f, 0);
 

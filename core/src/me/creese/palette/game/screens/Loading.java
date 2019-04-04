@@ -29,13 +29,14 @@ import me.creese.util.display.GameView;
 public class Loading extends GameView {
 
     public static final String FONT_ROBOTO_BOLD = "fonts/font_bold.fnt";
+    public static final String FONT_PIXEL_NUM = "fonts/pixel_font.fnt";
     private TexturePrepare prep;
 
 
     public Loading(PaletteStart root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root,P.rootBatch);
         addActor(new LogoDraw(root));
-        load();
+        loadFrameTextures();
     }
 
     private void load() {
@@ -50,9 +51,15 @@ public class Loading extends GameView {
         paramFont.genMipMaps = true;
         paramFont.magFilter = Texture.TextureFilter.Linear;
         paramFont.minFilter = Texture.TextureFilter.Linear;
-        paramFont.loadedCallback = (assetManager, fileName, type) -> loadFrameTextures();
+
+
+        BitmapFontLoader.BitmapFontParameter paramFont2 = new BitmapFontLoader.BitmapFontParameter();
+        paramFont2.genMipMaps = true;
+        //paramFont2.loadedCallback = (assetManager, fileName, type) -> loadFrameTextures();
 
         P.get().asset.load(FONT_ROBOTO_BOLD, BitmapFont.class, paramFont);
+        P.get().asset.load(FONT_PIXEL_NUM, BitmapFont.class,paramFont2);
+        //loadFrameTextures();
 
 
     }
@@ -67,7 +74,6 @@ public class Loading extends GameView {
         prep.setPreAndPostDraw(new TexturePrepare.PreAndPostDraw() {
             @Override
             public void drawPre() {
-                //Gdx.gl.glDepthMask(false);
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
@@ -75,7 +81,7 @@ public class Loading extends GameView {
             @Override
             public void drawPost() {
                 shape.flush();
-                //Gdx.gl.glDepthMask(true);
+                load();
             }
         });
         shape.setProjMatrix(prep.getCamera().combined);
@@ -85,20 +91,14 @@ public class Loading extends GameView {
             shape.rect(bX, bY, BigPixel.WIDTH_PIXEL, BigPixel.HEIGHT_PIXEL);
             shape.setSmooth(1.5f);
         });
-        prep.addDraw(FTextures.ARC_PALETTE_BUTTON, 180, 180, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                shape.arcLine(bX,bY,90,80,300,12);
-                shape.arcLine(bX,bY,90,40,20,12);
-            }
+        prep.addDraw(FTextures.ARC_PALETTE_BUTTON, 180, 180, (bX, bY) -> {
+            shape.arcLine(bX,bY,90,80,300,12);
+            shape.arcLine(bX,bY,90,40,20,12);
         });
 
-        prep.addDraw(FTextures.SMALL_ARC_PALETTE, 120, 120, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                shape.arcLine(bX,bY,60,120,80,12);
-                shape.arcLine(bX,bY,60,220,30,12);
-            }
+        prep.addDraw(FTextures.SMALL_ARC_PALETTE, 120, 120, (bX, bY) -> {
+            shape.arcLine(bX,bY,60,120,80,12);
+            shape.arcLine(bX,bY,60,220,30,12);
         });
 
         prep.addDraw(FTextures.CIRCLE_PALETTE, 180, 180, new TexturePrepare.Draw() {
@@ -111,6 +111,15 @@ public class Loading extends GameView {
             @Override
             public void draw(float bX, float bY) {
                 shape.rectRound(bX,bY,400,120,50);
+            }
+        });
+
+        prep.addDraw(FTextures.SCORE_BACK_SHADOW, 400, 120, new TexturePrepare.Draw() {
+            @Override
+            public void draw(float bX, float bY) {
+                shape.setSmooth(40);
+                shape.rectRound(bX,bY,400,120,50);
+                shape.setSmooth(1.5f);
             }
         });
         prep.addDraw(FTextures.BLOB, 170, 158, new TexturePrepare.Draw() {
@@ -197,15 +206,18 @@ public class Loading extends GameView {
         public void act(float delta) {
             super.act(delta);
             try {
-                if (P.get().asset.update() && prep.isLoad()) {
+                if (P.get().asset != null) {
+                    if (P.get().asset.update() && prep.isLoad()) {
 
-                    if (getActions().size == 0 && !drawBar) {
-                        addAction(Actions.color(clearColor, 1));
-                        drawBar = true;
+                        if (getActions().size == 0 && !drawBar) {
+                            addAction(Actions.color(clearColor, 1));
+                            drawBar = true;
+
+                        }
 
                     }
-
                 }
+
             } catch (GdxRuntimeException e) {
                 e.printStackTrace();
             }

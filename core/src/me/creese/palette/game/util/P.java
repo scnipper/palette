@@ -11,6 +11,9 @@ public class P {
     public static final Color BACKGROUND_COLOR = new Color(0xdbdbdbff);
     public static final Color GRAY_FONT_COLOR = new Color(0x969696ff);
     public static final Color BLACK_FONT_COLOR = new Color(0x2e2e2eff);
+
+
+    public static final float START_ZOOM = 0.4f;
     private static P instance;
     public AssetManager asset;
     public static final SpriteBatch rootBatch = new SpriteBatch(2000);

@@ -9,5 +9,5 @@ public class FTextures {
     public static final int BLOB                = 1006;
     public static final int BLOB_STROKE         = 1007;
     public static final int SMALL_BLOB          = 1008;
-    public static final int FONT_NUMBER         = 1009;
+    public static final int SCORE_BACK_SHADOW   = 1009;
 }

@@ -18,25 +18,45 @@ public class ScoreView extends Actor {
     private final Sprite sprite;
     private final Sprite shadow;
     private final BitmapFont font;
+    private int totalPixels;
+    private int currPixels;
+    private String drawText = "";
 
     public ScoreView(TexturePrepare prepare) {
         sprite = prepare.getByName(FTextures.SCORE_BACK);
-
         Color shadowColor = Color.BLACK.cpy();
-        shadowColor.a = 0.05f;
-        shadow = prepare.getByName(FTextures.SCORE_BACK);
+        shadowColor.a = 0.15f;
+        shadow = prepare.getByName(FTextures.SCORE_BACK_SHADOW);
         shadow.setColor(shadowColor);
 
         setBounds(P.WIDTH/2-sprite.getWidth()/2,P.HEIGHT-sprite.getHeight()-80,sprite.getWidth(),sprite.getHeight());
         sprite.setPosition(getX(),getY());
-        shadow.setPosition(getX()+10,getY()-20);
+        shadow.setPosition(getX()+20,getY()-25);
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
+    }
+
+    private void updateDrawText() {
+        drawText = currPixels+"/"+totalPixels+" px";
+    }
+
+    public void setTotalPixels(int totalPixels) {
+        this.totalPixels = totalPixels;
+        updateDrawText();
+    }
+
+    public void iteratePixel() {
+        currPixels++;
+        updateDrawText();
+    }
+    public void setCurrPixels(int currPixels) {
+        this.currPixels = currPixels;
+        updateDrawText();
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         shadow.draw(batch);
         sprite.draw(batch);
-        FontUtil.drawText(batch,font,"0/980px",getX(),getY(),0.6f,P.BLACK_FONT_COLOR,getWidth(), Align.center,false,getHeight());
+        FontUtil.drawText(batch,font,drawText,getX(),getY(),0.56f,P.BLACK_FONT_COLOR,getWidth(), Align.center,false,getHeight());
     }
 }
