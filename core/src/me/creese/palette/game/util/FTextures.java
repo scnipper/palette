@@ -12,4 +12,5 @@ public class FTextures {
     public static final int SCORE_BACK_SHADOW   = 1009;
     public static final int CLOSED_ICON         = 1010;
     public static final int SELECT_IMAGE        = 1011;
+    public static final int PLUS_ICON           = 1012;
 }

@@ -171,6 +171,12 @@ public class Loading extends GameView {
             shape.rectRound(bX,bY,200,300,20);
         });
 
+        prep.addDraw(FTextures.PLUS_ICON, 128, 128, (bX, bY) -> {
+            shape.setSmooth(0);
+            shape.rect(bX+54,bY,20,128);
+            shape.rect(bX,bY+54,128,20);
+            shape.setSmooth(1.5f);
+        });
         prep.start();
 
     }

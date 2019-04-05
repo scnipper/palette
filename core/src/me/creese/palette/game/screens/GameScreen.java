@@ -1,6 +1,5 @@
 package me.creese.palette.game.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -21,6 +20,7 @@ import me.creese.palette.game.entity.ScoreView;
 import me.creese.palette.game.entity.SquadPixel;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
+import me.creese.palette.game.util.MaxPaletteException;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
@@ -71,15 +71,20 @@ public class GameScreen extends GameView {
     }
 
 
-    public void startGame(Texture texture) {
+    public void startGame(Texture texture) throws MaxPaletteException {
 
+        if (paletteButtons != null) {
+            paletteButtons.clearChildren();
+        }
+        palette.clear();
+        generatePalette(texture);
         pixelsControl.setTouchable(Touchable.disabled);
         addActor(loadingActor);
-        generatePalette(texture);
-        addPalletteButtons();
+        addPaletteButtons();
+        getRoot().getGameViewForName(MainScreen.class).onBackPress();
     }
 
-    private void addPalletteButtons() {
+    private void addPaletteButtons() {
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         paletteButtons = new PaletteButtons();
         addActor(paletteButtons);
@@ -102,7 +107,7 @@ public class GameScreen extends GameView {
         }
     }
 
-    private void generatePalette(Texture texture) {
+    private void generatePalette(Texture texture) throws MaxPaletteException {
 
 
         scoreView.setTotalPixels(texture.getWidth() * texture.getHeight());
@@ -119,7 +124,9 @@ public class GameScreen extends GameView {
                 int color = pixmap.getPixel(j, i);
                 Color colorObj = new Color(color);
                 int numColor = addOrFindColorPalette(colorObj);
-
+                if(numColor > P.MAX_PALETTE_SIZE) {
+                    throw new MaxPaletteException("Palette > "+P.MAX_PALETTE_SIZE);
+                }
 
                 BigPixel bigPixel = new BigPixel(numColor, colorObj, j, i);
 
@@ -180,6 +187,11 @@ public class GameScreen extends GameView {
             }
         }
 
+    }
+
+    @Override
+    public void onBackPress() {
+        getRoot().showGameView(getRoot().getPrevView());
     }
 
     public PixelsControl getPixelsControl() {

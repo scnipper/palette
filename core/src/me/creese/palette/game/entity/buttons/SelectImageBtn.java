@@ -1,42 +1,41 @@
-package me.creese.palette.game.entity;
+package me.creese.palette.game.entity.buttons;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import me.creese.palette.game.entity.SelectImageMenu;
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.util.FTextures;
+import me.creese.palette.game.util.MaxPaletteException;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
 
-public class SelectImage extends Actor {
+public class SelectImageBtn extends Actor implements SelectImpl {
 
     private final Display root;
     private final Sprite back;
     private final Sprite closedIcon;
     private final int numImage;
+    private final String pathTexture;
     private Sprite texture;
     private State state;
 
-    public SelectImage(Display root, int numImage) {
+    public SelectImageBtn(Display root, int numImage, String pathTexture) {
+        this.pathTexture = pathTexture;
         this.numImage = numImage;
         this.root = root;
-        loadTexture();
 
         TexturePrepare prepare = root.getTransitObject(TexturePrepare.class);
         back = prepare.getByName(FTextures.SELECT_IMAGE);
         closedIcon = prepare.getByName(FTextures.CLOSED_ICON);
         closedIcon.setColor(Color.RED);
+        loadTexture();
 
-
-        if (texture.getWidth() >= texture.getHeight()) {
-            texture.setScale(back.getWidth() / texture.getWidth());
-        } else {
-            texture.setScale((back.getHeight() - 50) / texture.getHeight());
-        }
 
         setWidth(back.getWidth());
         setHeight(back.getHeight());
@@ -49,24 +48,34 @@ public class SelectImage extends Actor {
 
     }
 
+    @Override
     public void selectImage() {
-        //if (state.equals(State.OPEN) || state.equals(State.UNLOCK)) {
+        if (state.equals(State.OPEN) || state.equals(State.UNLOCK)) {
 
-            ((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
 
             root.showGameView(GameScreen.class);
-            root.getGameViewForName(GameScreen.class).startGame(texture.getTexture());
-        //}
+            try {
+                root.getGameViewForName(GameScreen.class).startGame(texture.getTexture());
+            } catch (MaxPaletteException maxPaletteEcxeption) {
+                maxPaletteEcxeption.printStackTrace();
+            }
+            ((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
+        }
     }
 
     public void loadTexture() {
-        if (texture == null) {
-
+/*        if (texture == null) {
+            texture = new Sprite();
+        }*/
+        if (pathTexture == null) {
             texture = new Sprite(new Texture("images/image_" + numImage + ".gif"));
-        }
-
-        texture.setTexture(new Texture("images/image_" + numImage + ".gif"));
+        } else texture = new Sprite(new Texture(Gdx.files.absolute(pathTexture)));
         texture.setOrigin(0, 0);
+        if (texture.getWidth() >= texture.getHeight()) {
+            texture.setScale(back.getWidth() / texture.getWidth());
+        } else {
+            texture.setScale((back.getHeight() - 50) / texture.getHeight());
+        }
     }
 
     public void setState(State state) {
@@ -75,8 +84,8 @@ public class SelectImage extends Actor {
             case LOCK:
                 back.setColor(getColor());
                 break;
-            case UNLOCK:
-                texture.setColor(Color.BLACK);
+            case OPEN:
+                back.setColor(Color.WHITE);
         }
     }
 
@@ -101,13 +110,13 @@ public class SelectImage extends Actor {
                 texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
                 texture.draw(batch);
                 break;
-            case UNLOCK:
+/*            case UNLOCK:
                 texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
                 texture.draw(batch);
                 back.setColor(getColor());
                 back.draw(batch);
-                back.setColor(Color.WHITE);
-                break;
+                back.setColor(Color.WHITE);*/
+
         }
 
 

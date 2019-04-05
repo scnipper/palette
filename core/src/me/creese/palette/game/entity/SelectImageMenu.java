@@ -1,6 +1,8 @@
 package me.creese.palette.game.entity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -9,8 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.SnapshotArray;
 
+import java.io.File;
+
+import me.creese.palette.game.entity.buttons.LoadImageBtn;
+import me.creese.palette.game.entity.buttons.SelectImageBtn;
+import me.creese.palette.game.entity.buttons.SelectImpl;
+import me.creese.palette.game.screens.Loading;
+import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.S;
 import me.creese.util.display.Display;
@@ -19,19 +29,25 @@ public class SelectImageMenu extends Group {
 
     private final Display root;
     private final Actor moveActor;
+    private final BitmapFont font;
     private Rectangle rectangle;
     private Rectangle scissors;
     private boolean isPan;
+    private float xOffset;
+    private float yOffset;
+    private boolean isAddNewImage;
 
     public SelectImageMenu(Display root) {
         this.root = root;
         rectangle = new Rectangle(0,0,P.WIDTH,P.HEIGHT-200);
 
+        font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
         moveActor = new Actor();
+        //moveActor.setDebug(true);
         moveActor.setWidth(P.WIDTH);
-        moveActor.setHeight(P.HEIGHT-200);
-        addActor(moveActor);
+
+
         moveActor.addListener(new ActorGestureListener(){
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
@@ -49,7 +65,7 @@ public class SelectImageMenu extends Group {
                     Actor hit = SelectImageMenu.this.hit(event.getStageX(), event.getStageY()-getY(), true);
 
                     if (hit != null) {
-                        ((SelectImage) hit).selectImage();
+                        ((SelectImpl) hit).selectImage();
                     }
                     moveActor.setTouchable(Touchable.enabled);
                 }
@@ -75,42 +91,94 @@ public class SelectImageMenu extends Group {
         int openImages = P.get().saves.getInteger(S.COUNT_OPEN_IMAGES, -1);
         int unlockImages = P.get().saves.getInteger(S.COUNT_UNLOCK_IMAGES, 1);
 
-        float x = 120, y = 1300;
+        xOffset = 120;
+        yOffset = 1300;
+        moveActor.setHeight(P.HEIGHT-200);
         for (int i = 0; i < P.COUNT_IMAGES; i++) {
-            SelectImage selectImage = new SelectImage(root, i);
-            selectImage.setPosition(x, y);
-
+            SelectImageBtn selectImage = new SelectImageBtn(root, i,null);
+            selectImage.setPosition(xOffset, yOffset);
             if (i < openImages) {
-                selectImage.setState(SelectImage.State.OPEN);
+                selectImage.setState(SelectImageBtn.State.OPEN);
             } else if (i < unlockImages) {
-                selectImage.setState(SelectImage.State.UNLOCK);
+                selectImage.setState(SelectImageBtn.State.UNLOCK);
             }
 
-            x += 120 + selectImage.getWidth();
+            xOffset += 120 + selectImage.getWidth();
 
-            if (x + selectImage.getWidth() > P.WIDTH) {
-                x = 120;
-                y -= 400;
-                if(y <=0) {
-                    moveActor.setHeight(moveActor.getHeight() + 400);
-                    moveActor.setY(moveActor.getY() - 400);
-                }
-            }
+            boundOffset(selectImage.getWidth());
             addActor(selectImage);
         }
+
+        yOffset-=100;
+        inflateMoveActor(300);
+
+
+        float finalY = yOffset;
+        addActor(new Actor(){
+            @Override
+            public void draw(Batch batch, float parentAlpha) {
+                FontUtil.drawText(batch,font,"Свое изображение",0, finalY,0.9f,P.BLACK_FONT_COLOR,P.WIDTH, Align.center);
+            }
+        });
+
+        yOffset-=500;
+        LoadImageBtn loadImageBtn = new LoadImageBtn(root);
+        loadImageBtn.setPosition(120,yOffset);
+        addActor(loadImageBtn);
+    }
+
+    private void boundOffset(float width) {
+        if (xOffset + width > P.WIDTH) {
+            xOffset = 120;
+            yOffset -= 400;
+            if(yOffset <=0) {
+                inflateMoveActor(400);
+            }
+        }
+    }
+
+    private void inflateMoveActor(float delta) {
+        moveActor.setHeight(moveActor.getHeight() + delta);
+        moveActor.setY(moveActor.getY() - delta);
     }
 
     public void freeTexturesExcept(int numExcept) {
         SnapshotArray<Actor> children = getChildren();
 
         for (Actor child : children) {
-            if(child instanceof SelectImage) {
-                SelectImage selectImage = (SelectImage) child;
+            if(child instanceof SelectImageBtn) {
+                SelectImageBtn selectImage = (SelectImageBtn) child;
                 if (numExcept != selectImage.getNumImage()) {
                     selectImage.getTexture().getTexture().dispose();
                 }
             }
         }
+    }
+
+    private void addLoadImages() {
+        File images = new File(Gdx.files.getLocalStoragePath()+"/images");
+
+
+        String[] list = images.list();
+        if (list != null) {
+            for (int i = 0; i < list.length; i++) {
+                SelectImageBtn selectImageBtn = new SelectImageBtn(root, P.COUNT_IMAGES + i, images.getAbsolutePath()+"/"+list[i]);
+
+                selectImageBtn.setState(SelectImageBtn.State.OPEN);
+                selectImageBtn.setPosition(xOffset,yOffset);
+                addActor(selectImageBtn);
+                xOffset += 120 + selectImageBtn.getWidth();
+                boundOffset(selectImageBtn.getWidth());
+
+
+            }
+        }
+
+
+    }
+
+    public void addOneNewImage() {
+        isAddNewImage = true;
     }
 
     @Override
@@ -143,14 +211,18 @@ public class SelectImageMenu extends Group {
             }
 
             SnapshotArray<Actor> children = getChildren();
-            if(children.size > 1) {
+            if(children.size > 0) {
                 for (Actor child : children) {
-                    if(child instanceof SelectImage) {
-                        SelectImage selectImage = (SelectImage) child;
+                    if(child instanceof SelectImageBtn) {
+                        SelectImageBtn selectImage = (SelectImageBtn) child;
                         selectImage.loadTexture();
                     }
                 }
-            } else addImages();
+            } else {
+                addActor(moveActor);
+                addImages();
+                addLoadImages();
+            }
 
             moveActor.setZIndex(999999);
         } else {

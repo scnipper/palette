@@ -5,16 +5,22 @@ import com.badlogic.gdx.Gdx;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.screens.MainScreen;
+import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.P;
 import me.creese.util.display.Display;
 
 public class PaletteStart extends Display {
-    public PaletteStart() {
+
+    private final AdUtil adutil;
+
+    public PaletteStart(AdUtil adutil) {
+        this.adutil = adutil;
 
     }
 
     @Override
     public void create() {
+        addTransitObject(AdUtil.class.getName(),adutil);
         P.get().saves = Gdx.app.getPreferences("sav");
         Gdx.input.setCatchBackKey(true);
         setBackgroundColor(P.BACKGROUND_COLOR);
