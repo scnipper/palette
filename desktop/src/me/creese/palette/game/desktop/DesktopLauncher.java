@@ -7,6 +7,7 @@ import java.io.File;
 
 import me.creese.palette.game.PaletteStart;
 import me.creese.palette.game.util.AdUtil;
+import me.creese.palette.game.util.GetImage;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -15,9 +16,15 @@ public class DesktopLauncher {
 		config.height = 640;
 		new LwjglApplication(new PaletteStart(new AdUtil() {
 			@Override
-			public File requestImagePath() {
-				return null;
+			public void requestImagePath(GetImage getImage) {
+
 			}
+
+			@Override
+			public void showToast(String text) {
+
+			}
+
 		}), config);
 	}
 }

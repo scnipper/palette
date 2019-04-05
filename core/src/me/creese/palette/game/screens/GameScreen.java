@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -76,6 +78,7 @@ public class GameScreen extends GameView {
         if (paletteButtons != null) {
             paletteButtons.clearChildren();
         }
+        groupPixels.clear();
         palette.clear();
         generatePalette(texture);
         pixelsControl.setTouchable(Touchable.disabled);
@@ -164,6 +167,10 @@ public class GameScreen extends GameView {
         } else {
             return findColorNum + 1;
         }
+    }
+
+    public GroupPixels getGroupPixels() {
+        return groupPixels;
     }
 
     @Override

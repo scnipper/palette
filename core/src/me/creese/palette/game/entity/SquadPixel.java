@@ -218,6 +218,11 @@ public class SquadPixel extends Actor {
         return xToCamera > -getWidth() && xToCamera < P.WIDTH * zoom && yToCamera > 0 && yToCamera < P.HEIGHT * zoom + getHeight();
     }
 
+    public void dispose() {
+        frameBuffer.dispose();
+        bufferTexture.getTexture().dispose();
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         /*if (isRedrawAll) {
@@ -239,6 +244,8 @@ public class SquadPixel extends Actor {
             sprite = ((GroupPixels) parent).getSprite();
             //isRedrawAll = true;
             redrawAllSquad();
+        } else {
+            dispose();
         }
     }
 }

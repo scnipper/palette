@@ -52,6 +52,8 @@ public class PaletteStart extends Display {
     @Override
     public void dispose() {
         super.dispose();
+        getGameViewForName(GameScreen.class).getGroupPixels().clear();
+        P.get().asset.dispose();
         P.get().saves.flush();
     }
 }

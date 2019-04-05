@@ -1,5 +1,6 @@
 package me.creese.palette.game.entity;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -35,7 +36,6 @@ public class SelectImageMenu extends Group {
     private boolean isPan;
     private float xOffset;
     private float yOffset;
-    private boolean isAddNewImage;
 
     public SelectImageMenu(Display root) {
         this.root = root;
@@ -44,7 +44,7 @@ public class SelectImageMenu extends Group {
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
         moveActor = new Actor();
-        //moveActor.setDebug(true);
+        moveActor.setDebug(true);
         moveActor.setWidth(P.WIDTH);
 
 
@@ -87,12 +87,13 @@ public class SelectImageMenu extends Group {
     }
 
     private void addImages() {
-
+        addActor(moveActor);
         int openImages = P.get().saves.getInteger(S.COUNT_OPEN_IMAGES, -1);
         int unlockImages = P.get().saves.getInteger(S.COUNT_UNLOCK_IMAGES, 1);
 
         xOffset = 120;
         yOffset = 1300;
+        moveActor.setPosition(0,0);
         moveActor.setHeight(P.HEIGHT-200);
         for (int i = 0; i < P.COUNT_IMAGES; i++) {
             SelectImageBtn selectImage = new SelectImageBtn(root, i,null);
@@ -156,6 +157,9 @@ public class SelectImageMenu extends Group {
     }
 
     private void addLoadImages() {
+
+        if(Gdx.app.getType().equals(Application.ApplicationType.Desktop)) return;
+
         File images = new File(Gdx.files.getLocalStoragePath()+"/images");
 
 
@@ -175,10 +179,6 @@ public class SelectImageMenu extends Group {
         }
 
 
-    }
-
-    public void addOneNewImage() {
-        isAddNewImage = true;
     }
 
     @Override
@@ -219,7 +219,7 @@ public class SelectImageMenu extends Group {
                     }
                 }
             } else {
-                addActor(moveActor);
+
                 addImages();
                 addLoadImages();
             }
