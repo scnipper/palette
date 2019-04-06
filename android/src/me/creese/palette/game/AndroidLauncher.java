@@ -33,51 +33,48 @@ public class AndroidLauncher extends AndroidApplication implements AdUtil {
         runOnUiThread(() -> {
             OpenFileDialog openFileDialog = new OpenFileDialog(AndroidLauncher.this);
             openFileDialog.setFilter("(.*/)*.+\\.(png|jpg|gif|jpeg|PNG|JPG|GIF|JPEG)$","^[^.].*[^-_.]$");
-            openFileDialog.setOpenDialogListener(new OpenFileDialog.OpenDialogListener() {
-                @Override
-                public void OnSelectedFile(String fileName) {
-                    BitmapFactory.Options opts = new BitmapFactory.Options();
-                    opts.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(fileName, opts);
+            openFileDialog.setOpenDialogListener(fileName -> {
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(fileName, opts);
 
-                    if (opts.outHeight > P.MAX_IMAGE_HEIGHT || opts.outWidth > P.MAX_IMAGE_WIDTH) {
-                        showToast("Изображение должно быть не больше " + P.MAX_IMAGE_WIDTH + "x" + P.MAX_IMAGE_HEIGHT);
-                    } else {
-                        File dataDir = new File(getFilesDir().getAbsoluteFile() + "/images");
-                        if (!dataDir.exists()) {
-                            dataDir.mkdirs();
-                        }
+                if (opts.outHeight > P.MAX_IMAGE_HEIGHT || opts.outWidth > P.MAX_IMAGE_WIDTH) {
+                    showToast("Изображение должно быть не больше " + P.MAX_IMAGE_WIDTH + "x" + P.MAX_IMAGE_HEIGHT);
+                } else {
+                    File dataDir = new File(getFilesDir().getAbsoluteFile() + "/images");
+                    if (!dataDir.exists()) {
+                        dataDir.mkdirs();
+                    }
 
-                        Random random = new Random();
-                        File fileImage = new File(dataDir.getAbsoluteFile() + "/" + dataDir.list().length+"_"+random.nextInt(150000));
+                    Random random = new Random();
+                    File fileImage = new File(dataDir.getAbsoluteFile() + "/" + dataDir.list().length+"_"+random.nextInt(150000));
 
-                        try {
-                            if (fileImage.createNewFile()) {
-                                FileInputStream fileInputStream = new FileInputStream(fileName);
+                    try {
+                        if (fileImage.createNewFile()) {
+                            FileInputStream fileInputStream = new FileInputStream(fileName);
 
-                                FileOutputStream fileOutputStream = new FileOutputStream(fileImage);
+                            FileOutputStream fileOutputStream = new FileOutputStream(fileImage);
 
-                                int read = fileInputStream.read();
-                                while (read != -1) {
-                                    fileOutputStream.write(read);
-                                    read = fileInputStream.read();
-                                }
-
-                                Gdx.app.postRunnable(() -> getImage.loadImage(fileImage));
-                                return;
-
-
+                            int read = fileInputStream.read();
+                            while (read != -1) {
+                                fileOutputStream.write(read);
+                                read = fileInputStream.read();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+
+                            Gdx.app.postRunnable(() -> getImage.loadImage(fileImage));
+                            return;
+
+
                         }
-
-
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
 
-                    getImage.loadImage(null);
                 }
+
+
+                getImage.loadImage(null);
             });
             openFileDialog.show();
         });
