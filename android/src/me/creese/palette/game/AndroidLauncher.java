@@ -1,5 +1,7 @@
 package me.creese.palette.game;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -84,5 +86,21 @@ public class AndroidLauncher extends AndroidApplication implements AdUtil {
     @Override
     public void showToast(String text) {
         runOnUiThread(() -> Toast.makeText(AndroidLauncher.this, text, Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void showDialogExit(Runnable afterOk) {
+        runOnUiThread(() -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(AndroidLauncher.this);
+
+            builder.setMessage("Прогресс будет потерян.")
+                    .setTitle("Выйти в меню?")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        dialog.dismiss();
+                        Gdx.app.postRunnable(afterOk);
+                    })
+                    .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                    .show();
+        });
     }
 }

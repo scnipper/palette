@@ -22,6 +22,7 @@ import me.creese.palette.game.entity.ScoreView;
 import me.creese.palette.game.entity.SquadPixel;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
+import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.MaxPaletteException;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
@@ -151,6 +152,7 @@ public class GameScreen extends GameView {
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
 
+        camera.position.set(P.WIDTH/2, P.HEIGHT/2, 0);
         camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL*camera.zoom) / 2.f,
                 -(texture.getHeight() * BigPixel.HEIGHT_PIXEL *camera.zoom) / 2.f, 0);
 
@@ -198,7 +200,9 @@ public class GameScreen extends GameView {
 
     @Override
     public void onBackPress() {
-        getRoot().showGameView(getRoot().getPrevView());
+
+        getRoot().getTransitObject(AdUtil.class).showDialogExit(() -> getRoot().showGameView(MainScreen.class));
+
     }
 
     public PixelsControl getPixelsControl() {
