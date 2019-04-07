@@ -64,8 +64,11 @@ public class LoadImageBtn extends Actor implements SelectImpl{
                 }
 
                 SelectImageMenu parent = (SelectImageMenu) getParent();
-                parent.clearChildren();
-                parent.freeTexturesExcept(-1);
+                if (parent != null) {
+                    parent.clearChildren();
+                    parent.freeTexturesExcept(-1);
+                }
+
             }
         });
     }
