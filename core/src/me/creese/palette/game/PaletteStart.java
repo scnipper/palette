@@ -2,6 +2,7 @@ package me.creese.palette.game;
 
 import com.badlogic.gdx.Gdx;
 
+import me.creese.palette.game.entity.GroupPixels;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.screens.MainScreen;
@@ -52,7 +53,10 @@ public class PaletteStart extends Display {
     @Override
     public void dispose() {
         super.dispose();
-        getGameViewForName(GameScreen.class).getGroupPixels().clear();
+        GameScreen gameScreen = getGameViewForName(GameScreen.class);
+        if (gameScreen != null) {
+            gameScreen.getGroupPixels().clear();
+        }
         P.get().asset.dispose();
         P.get().saves.flush();
     }

@@ -17,6 +17,7 @@ public class P {
     public static final Color BACKGROUND_COLOR = new Color(0xdbdbdbff);
     public static final Color GRAY_FONT_COLOR = new Color(0x969696ff);
     public static final Color BLACK_FONT_COLOR = new Color(0x2e2e2eff);
+    public static final Color ACTIVATE_BONUS_COLOR = new Color(0xfdd837ff);
 
 
     public static final int COUNT_IMAGES = 4;

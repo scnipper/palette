@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Array;
 
+import me.creese.palette.game.entity.bonus.Bonus;
+import me.creese.palette.game.entity.bonus.BonusGroup;
 import me.creese.palette.game.util.P;
 
 public class PixelsControl extends Group {
@@ -27,8 +29,10 @@ public class PixelsControl extends Group {
     private boolean isMoveToMaxZoom;
     private float zoomMax;
     private boolean isDoubleTap;
+    private BigPixel lastBigPixel;
+    private boolean isOneTap;
 
-    public PixelsControl(Stage stagePixel) {
+    public PixelsControl(Stage stagePixel, BonusGroup bonusGroup) {
         setBounds(0, 0, P.WIDTH, P.HEIGHT);
         camera = (OrthographicCamera) stagePixel.getCamera();
 
@@ -39,19 +43,34 @@ public class PixelsControl extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
 
-                if(count >= 2) isDoubleTap = true;
+
+
+                if (count == 1) isOneTap = true;
+                if (count >= 2) isDoubleTap = true;
             }
 
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
                 isPan = true;
 
+/*                boolean continuePan = true;
+                Bonus activateBonus = bonusGroup.getActivateBonus();
+                if (activateBonus != null && downPixelSquad != null) {
+                    System.out.println(x+" "+y);
+                    System.out.println(downPixelSquad.getDownX()+" "+downPixelSquad.getDownY());
+                    downPixelSquad.addDownX(deltaX);
+                    downPixelSquad.addDownY(deltaY);
+                    lastBigPixel = downPixelSquad.touchDown(true);
+                    GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
+                    continuePan = activateBonus.panFinger(groupPixel,PixelsControl.this,lastBigPixel);
+                }*/
 
-                float zoom = camera.zoom;
-                camera.translate(-(deltaX * 2 * zoom), -(deltaY * 2 * zoom));
+                    float zoom = camera.zoom;
+                    camera.translate(-(deltaX * 2 * zoom), -(deltaY * 2 * zoom));
 
-                if(moveActor.getActions().size == 0)
-                boundPos(true);
+                    if (moveActor.getActions().size == 0) boundPos(true);
+
+
 
 
             }
@@ -76,14 +95,42 @@ public class PixelsControl extends Group {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
 
-                System.out.println("touch up "+isDoubleTap);
+                Bonus activateBonus = bonusGroup.getActivateBonus();
+                if (isDoubleTap) {
+
+                    if (activateBonus != null) {
+
+                        GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
+                        activateBonus.doubleTapFinger(groupPixel, PixelsControl.this, lastBigPixel);
+
+
+                    }
+                }
 
                 if (!isPan && !isZoom && downPixelSquad != null) {
-                    downPixelSquad.touchDown();
+                    lastBigPixel = downPixelSquad.touchDown(false);
+                    if (lastBigPixel != null) {
+                        if (lastBigPixel.getState().equals(BigPixel.State.PAINT) && !lastBigPixel.getBonusAdd()) {
+                            lastBigPixel.setBonusAdd(true);
+                            if (bonusGroup.getActivateBonus() == null) {
+                                bonusGroup.addRandomBonus(event.getStageX(), event.getStageY());
+                            }
+                        }
+
+                        if (activateBonus != null ) {
+                            GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
+
+                            activateBonus.upFinger(groupPixel,PixelsControl.this,lastBigPixel);
+                        }
+                    }
+
+
                 }
+
+
                 downPixelSquad = null;
 
-                if(isZoom && !isMoveToMaxZoom) {
+                if (isZoom && !isMoveToMaxZoom) {
                     boundPos(false);
                 }
 
@@ -126,7 +173,6 @@ public class PixelsControl extends Group {
     private void boundPos(boolean isPan) {
 
 
-
         float wScreen = P.WIDTH * camera.zoom;
         float hScreen = P.HEIGHT * camera.zoom;
         float setX = camera.position.x;
@@ -141,7 +187,6 @@ public class PixelsControl extends Group {
         }
 
 
-
         if (!isMaxZoom) {
             if (camera.position.y > (Math.abs(hScreen / 2 - P.HEIGHT) + MARGIN)) {
                 setY = (Math.abs(hScreen / 2 - P.HEIGHT) + MARGIN);
@@ -150,22 +195,22 @@ public class PixelsControl extends Group {
                 setY = ((realHeight - Math.abs(hScreen / 2 + P.HEIGHT)) + MARGIN) * -1;
             }
         } else {
-            if (camera.position.y < -(hScreen/2-P.HEIGHT-MARGIN)) {
-                setY = -(hScreen/2-P.HEIGHT-MARGIN);
+            if (camera.position.y < -(hScreen / 2 - P.HEIGHT - MARGIN)) {
+                setY = -(hScreen / 2 - P.HEIGHT - MARGIN);
             }
-            if (camera.position.y > hScreen/2-realHeight+P.HEIGHT-MARGIN) {
-                setY = hScreen/2-realHeight+P.HEIGHT-MARGIN;
+            if (camera.position.y > hScreen / 2 - realHeight + P.HEIGHT - MARGIN) {
+                setY = hScreen / 2 - realHeight + P.HEIGHT - MARGIN;
             }
 
         }
 
-        if(isPan) {
+        if (isPan) {
             camera.position.x = setX;
             camera.position.y = setY;
         } else {
-            moveActor.setPosition(camera.position.x,camera.position.y);
+            moveActor.setPosition(camera.position.x, camera.position.y);
             moveActor.setUserObject(false);
-            moveActor.addAction(Actions.sequence(Actions.moveTo(setX,setY,0.2f),Actions.run(new Runnable() {
+            moveActor.addAction(Actions.sequence(Actions.moveTo(setX, setY, 0.2f), Actions.run(new Runnable() {
                 @Override
                 public void run() {
                     isMoveToMaxZoom = true;
@@ -186,7 +231,7 @@ public class PixelsControl extends Group {
 
         zoomMax = (realWidth + MARGIN * 2) / (P.WIDTH);
         checkCameraZoom();
-        if(isMaxZoom) boundPos(false);
+        if (isMaxZoom) boundPos(false);
     }
 
     @Override

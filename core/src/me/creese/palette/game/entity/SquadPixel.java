@@ -53,9 +53,9 @@ public class SquadPixel extends Actor {
         setBounds(arrX * BigPixel.WIDTH_PIXEL, P.HEIGHT - arrY * BigPixel.HEIGHT_PIXEL, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD, BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD);
 
         moveBy(0, -getHeight());
-        setDebug(true);
+        //setDebug(true);
 
-        /*Gdx.app.postRunnable(() ->*/ frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) getWidth(), (int) getHeight(), false) {
+         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) getWidth(), (int) getHeight(), false) {
             @Override
             protected Texture createTexture(FrameBufferTextureAttachmentSpec attachmentSpec) {
 
@@ -64,7 +64,6 @@ public class SquadPixel extends Actor {
                 return new Texture(data);
             }
         };
-       // });
 
         camera = new OrthographicCamera(getWidth(), getHeight());
         camera.translate(getWidth() / 2, getHeight() / 2);
@@ -85,6 +84,9 @@ public class SquadPixel extends Actor {
         font = P.get().asset.get(Loading.FONT_PIXEL_NUM, BitmapFont.class);
     }
 
+    /**
+     * Перерисовать полностью группу пикселей
+     */
     public void redrawAllSquad() {
 
 
@@ -115,6 +117,9 @@ public class SquadPixel extends Actor {
         if (beginAfter) rootBatch.begin();
     }
 
+    /**
+     * Создание текстуры из фрейм буфера
+     */
     private void createTexture() {
         Texture colorBufferTexture = frameBuffer.getColorBufferTexture();
         bufferTexture = new TextureRegion(colorBufferTexture);
@@ -122,6 +127,11 @@ public class SquadPixel extends Actor {
         frameBuffer.end();
     }
 
+    /**
+     * Перерисовать один пиксель
+     * @param x
+     * @param y
+     */
     public void redrawOnePixel(int x, int y) {
         SpriteBatch rootBatch = P.rootBatch;
         frameBuffer.begin();
@@ -147,6 +157,7 @@ public class SquadPixel extends Actor {
 
         sprite.setPosition(x * BigPixel.WIDTH_PIXEL, ((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL) - y * BigPixel.HEIGHT_PIXEL) - BigPixel.HEIGHT_PIXEL);
         BigPixel bigPixel = gridPixels[y + arrY][x + arrX];
+        bigPixel.setSquad(this);
 
         switch (bigPixel.getState()) {
             case PAINT:
@@ -180,22 +191,37 @@ public class SquadPixel extends Actor {
         }
     }
 
-    public void touchDown() {
+    /**
+     * Нажатие на пиксель
+     * @return
+     */
+    public BigPixel touchDown(boolean isJustGetPixel) {
 
         PaletteButton selectButton = root.getGameViewForName(GameScreen.class).getPaletteButtons().getSelectButton();
 
 
         int indX = (int) (downX / BigPixel.WIDTH_PIXEL) + arrX;
         int indY = (int) (((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL) - downY) / BigPixel.HEIGHT_PIXEL) + arrY;
-
+        BigPixel bigPixel = null;
         if (indY < gridPixels.length) {
             if (indX < gridPixels[indY].length) {
-                BigPixel bigPixel = gridPixels[indY][indX];
+                bigPixel = gridPixels[indY][indX];
 
+                if(isJustGetPixel)
+                return bigPixel;
+
+                ScoreView scoreView = root.getTransitObject(ScoreView.class);
                 if (selectButton.getNum() == bigPixel.getNumColor()) {
-                    root.getTransitObject(ScoreView.class).iteratePixel();
-                    bigPixel.setState(BigPixel.State.PAINT);
+
+                    if(!bigPixel.getState().equals(BigPixel.State.PAINT)) {
+                        scoreView.iteratePixel();
+                        bigPixel.setState(BigPixel.State.PAINT);
+
+                    }
                 } else {
+                    if(bigPixel.getState().equals(BigPixel.State.PAINT)) {
+                        scoreView.decrementScore(1);
+                    }
                     bigPixel.setState(BigPixel.State.WRONG_PAINT);
                     Color color = selectButton.getColor().cpy();
                     color.a = 0.5f;
@@ -204,6 +230,9 @@ public class SquadPixel extends Actor {
                 redrawOnePixel(indX, indY);
             }
         }
+
+
+        return bigPixel;
 
 
     }
@@ -221,6 +250,30 @@ public class SquadPixel extends Actor {
     public void dispose() {
         frameBuffer.dispose();
         bufferTexture.getTexture().dispose();
+    }
+
+    public BigPixel[][] getGridPixels() {
+        return gridPixels;
+    }
+
+    public Display getRoot() {
+        return root;
+    }
+
+    public void addDownX(float deltaX) {
+        this.downX += deltaX;
+    }
+
+    public void addDownY(float deltaY) {
+        this.downY += deltaY;
+    }
+
+    public float getDownX() {
+        return downX;
+    }
+
+    public float getDownY() {
+        return downY;
     }
 
     @Override

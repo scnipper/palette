@@ -20,6 +20,7 @@ import me.creese.palette.game.entity.PaletteButtons;
 import me.creese.palette.game.entity.PixelsControl;
 import me.creese.palette.game.entity.ScoreView;
 import me.creese.palette.game.entity.SquadPixel;
+import me.creese.palette.game.entity.bonus.BonusGroup;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
 import me.creese.palette.game.util.AdUtil;
@@ -37,6 +38,7 @@ public class GameScreen extends GameView {
     private final PixelsControl pixelsControl;
     private final ScoreView scoreView;
     private final LoadingActor loadingActor;
+    private final BonusGroup bonusGroup;
     private PaletteButtons paletteButtons;
     private int xSquadCount;
     private int ySquadCount;
@@ -58,14 +60,16 @@ public class GameScreen extends GameView {
                 //System.out.println(((SpriteBatch) stagePixel.getBatch()).renderCalls);
             }
         };
-        pixelsControl = new PixelsControl(stagePixel);
+        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
+        bonusGroup = new BonusGroup(prepare);
+        pixelsControl = new PixelsControl(stagePixel,bonusGroup);
         addActor(pixelsControl);
+        addActor(bonusGroup);
         addStage(stagePixel, 0);
         groupPixels = new GroupPixels(root);
         stagePixel.addActor(groupPixels);
 
 
-        TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         scoreView = new ScoreView(prepare);
         getRoot().addTransitObject(scoreView);
         addActor(scoreView);
@@ -74,8 +78,14 @@ public class GameScreen extends GameView {
     }
 
 
+    /**
+     * Начало игры
+     * @param texture текстура которая будет преобразована в сетку
+     * @throws MaxPaletteException
+     */
     public void startGame(Texture texture) throws MaxPaletteException {
-
+        bonusGroup.clear();
+        bonusGroup.setActivateBonus(null);
         if (paletteButtons != null) {
             paletteButtons.clearChildren();
         }
@@ -88,6 +98,9 @@ public class GameScreen extends GameView {
         getRoot().getGameViewForName(MainScreen.class).onBackPress();
     }
 
+    /**
+     * Добавление кнопок с палитрой
+     */
     private void addPaletteButtons() {
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         paletteButtons = new PaletteButtons();
@@ -111,6 +124,11 @@ public class GameScreen extends GameView {
         }
     }
 
+    /**
+     * Создание палитры
+     * @param texture
+     * @throws MaxPaletteException
+     */
     private void generatePalette(Texture texture) throws MaxPaletteException {
 
 
@@ -161,6 +179,11 @@ public class GameScreen extends GameView {
 
     }
 
+    /**
+     * Добавление цвета в палитру или если он добавлен только возвращать номер
+     * @param color
+     * @return
+     */
     private int addOrFindColorPalette(Color color) {
         int findColorNum = palette.indexOf(color);
         if (findColorNum == -1) {

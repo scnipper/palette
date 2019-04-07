@@ -68,6 +68,11 @@ public class DesktopLauncher implements AdUtil,FilenameFilter{
 	}
 
 	@Override
+	public void showDialogExit(Runnable afterOk) {
+
+	}
+
+	@Override
 	public boolean accept(File dir, String name) {
 		File tempFile = new File(String.format("%s/%s", dir.getPath(), name));
 		if (tempFile.isFile()) return tempFile.getName().matches("(.*/)*.+\\.(png|jpg|gif|jpeg|PNG|JPG|GIF|JPEG)$");

@@ -177,8 +177,36 @@ public class Loading extends GameView {
             shape.rect(bX,bY+54,128,20);
             shape.setSmooth(1.5f);
         });
-        prep.start();
 
+        prep.addDraw(FTextures.DOUBLE_TAP_ICON, 128, 140, (bX, bY) -> {
+            shape.circleLine(bX+32,bY+32,32,13);
+            shape.arcLine(bX+19,bY+32,45,30,120,8);
+            shape.arcLine(bX+9,bY+32,55,30,120,8);
+        });
+
+        prep.addDraw(FTextures.HOLD_ICON, 64, 64, (bX, bY) -> {
+            shape.circle(bX+12,bY+12,20);
+            shape.circleLine(bX,bY,32,7);
+        });
+
+        prep.addDraw(FTextures.BOMB_ICON, 40, 64, (bX, bY) -> {
+            shape.circle(bX,bY,20);
+            shape.setSmooth(0);
+            shape.rectRound(bX+13,bY+30,14,20,5);
+            shape.setSmooth(1.5f);
+
+            shape.arcLine(bX+17,bY+25,20,90,70,5);
+        });
+
+        prep.addDraw(FTextures.CIRCLE_BONUS, 140, 140, (bX, bY) -> {
+            shape.circle(bX,bY,70);
+        });
+        prep.addDraw(FTextures.CIRCLE_BONUS_SHADOW, 140, 140, (bX, bY) -> {
+            shape.setSmooth(30);
+            shape.circle(bX,bY,70);
+            shape.setSmooth(1.5f);
+        });
+        prep.start();
     }
 
     class LogoDraw extends Group {

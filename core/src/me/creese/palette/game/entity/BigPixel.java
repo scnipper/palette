@@ -11,6 +11,9 @@ public class BigPixel {
     private final int posY;
     private State state;
     private Color wrongColor;
+    private SquadPixel squad;
+    private boolean bonusAdd;
+
 
 
 
@@ -51,6 +54,30 @@ public class BigPixel {
 
     public int getNumColor() {
         return numColor;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public void setSquad(SquadPixel squad) {
+
+        this.squad = squad;
+    }
+    public void setBonusAdd(boolean bonusAdd) {
+
+        this.bonusAdd = bonusAdd;
+    }
+
+    public boolean getBonusAdd() {
+        return bonusAdd;
+    }
+    public SquadPixel getSquad() {
+        return squad;
     }
 
     @Override

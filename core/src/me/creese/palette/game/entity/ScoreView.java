@@ -48,6 +48,10 @@ public class ScoreView extends Actor {
         currPixels++;
         updateDrawText();
     }
+    public void decrementScore(int delta) {
+        currPixels-=delta;
+        updateDrawText();
+    }
     public void setCurrPixels(int currPixels) {
         this.currPixels = currPixels;
         updateDrawText();
