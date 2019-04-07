@@ -44,6 +44,7 @@ public class SquadPixel extends Actor {
     private float downY;
     private OrthographicCamera stageCamera;
     private boolean isRedrawAll;
+    private Color fillColor;
 
     public SquadPixel(Display root, BigPixel[][] gridPixels, int arrX, int arrY) {
         this.root = root;
@@ -159,35 +160,41 @@ public class SquadPixel extends Actor {
         BigPixel bigPixel = gridPixels[y + arrY][x + arrX];
         bigPixel.setSquad(this);
 
-        switch (bigPixel.getState()) {
-            case PAINT:
-                sprite.setScale(1);
-                sprite.setColor(bigPixel.getColor());
-                sprite.draw(batch);
-                break;
-            case NOT_PAINT:
-                sprite.setColor(Color.WHITE);
-                sprite.setScale(0.95f);
-                sprite.draw(batch);
+        if(fillColor != null) {
+            sprite.setScale(1);
+            sprite.setColor(fillColor);
+            sprite.draw(batch);
+        } else {
+            switch (bigPixel.getState()) {
+                case PAINT:
+                    sprite.setScale(1);
+                    sprite.setColor(bigPixel.getColor());
+                    sprite.draw(batch);
+                    break;
+                case NOT_PAINT:
+                    sprite.setColor(Color.WHITE);
+                    sprite.setScale(0.95f);
+                    sprite.draw(batch);
 
-                FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), FONT_SCALE, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
+                    FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), FONT_SCALE, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
 
-                break;
-            case WRONG_PAINT:
-                sprite.setScale(1);
-                sprite.setColor(P.BACKGROUND_COLOR);
-                sprite.draw(batch);
-                sprite.setColor(Color.WHITE);
-                sprite.setScale(0.95f);
-                sprite.draw(batch);
+                    break;
+                case WRONG_PAINT:
+                    sprite.setScale(1);
+                    sprite.setColor(P.BACKGROUND_COLOR);
+                    sprite.draw(batch);
+                    sprite.setColor(Color.WHITE);
+                    sprite.setScale(0.95f);
+                    sprite.draw(batch);
 
-                FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), FONT_SCALE, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
+                    FontUtil.drawText(batch, font, String.valueOf(bigPixel.getNumColor()), sprite.getX(), sprite.getY(), FONT_SCALE, P.GRAY_FONT_COLOR, sprite.getWidth(), Align.center, false, sprite.getHeight());
 
-                sprite.setScale(1);
-                sprite.setColor(bigPixel.getWrongColor());
-                sprite.draw(batch);
+                    sprite.setScale(1);
+                    sprite.setColor(bigPixel.getWrongColor());
+                    sprite.draw(batch);
 
-                break;
+                    break;
+            }
         }
     }
 
@@ -274,6 +281,10 @@ public class SquadPixel extends Actor {
 
     public float getDownY() {
         return downY;
+    }
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
 
     @Override

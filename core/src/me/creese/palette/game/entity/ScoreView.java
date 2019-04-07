@@ -7,22 +7,29 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Align;
 
+import javax.xml.soap.Text;
+
+import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
+import me.creese.util.display.Display;
 
 public class ScoreView extends Actor {
 
     private final Sprite sprite;
     private final Sprite shadow;
     private final BitmapFont font;
+    private final Display root;
     private int totalPixels;
     private int currPixels;
     private String drawText = "";
 
-    public ScoreView(TexturePrepare prepare) {
+    public ScoreView(Display root) {
+        this.root = root;
+        TexturePrepare prepare = root.getTransitObject(TexturePrepare.class);
         sprite = prepare.getByName(FTextures.SCORE_BACK);
         Color shadowColor = Color.BLACK.cpy();
         shadowColor.a = 0.15f;
@@ -47,6 +54,10 @@ public class ScoreView extends Actor {
     public void iteratePixel() {
         currPixels++;
         updateDrawText();
+
+        if(currPixels >= totalPixels ) {
+            root.getGameViewForName(GameScreen.class).gameOver();
+        }
     }
     public void decrementScore(int delta) {
         currPixels-=delta;

@@ -65,9 +65,12 @@ public abstract class Bonus extends Actor {
 
     public void deleteBonus() {
         BonusGroup parent = (BonusGroup) getParent();
-        parent.setActivateBonus(null);
-        remove();
-        parent.updatePosBonus();
+        if (parent != null) {
+            parent.setActivateBonus(null);
+            remove();
+            parent.updatePosBonus();
+        }
+
     }
 
     public void setFontScale(float fontScale) {

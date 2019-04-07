@@ -1,7 +1,6 @@
 package me.creese.palette.game;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -49,7 +48,7 @@ public class AndroidLauncher extends AndroidApplication implements AdUtil {
                     }
 
                     Random random = new Random();
-                    File fileImage = new File(dataDir.getAbsoluteFile() + "/" + dataDir.list().length+"_"+random.nextInt(150000));
+                    File fileImage = new File(dataDir.getAbsoluteFile() + "/" + dataDir.list().length + "_" + random.nextInt(150000));
 
                     try {
                         if (fileImage.createNewFile()) {
@@ -93,14 +92,10 @@ public class AndroidLauncher extends AndroidApplication implements AdUtil {
         runOnUiThread(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(AndroidLauncher.this);
 
-            builder.setMessage("Прогресс будет потерян.")
-                    .setTitle("Выйти в меню?")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        dialog.dismiss();
-                        Gdx.app.postRunnable(afterOk);
-                    })
-                    .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
-                    .show();
+            builder.setMessage("Прогресс будет потерян.").setTitle("Выйти в меню?").setPositiveButton("OK", (dialog, which) -> {
+                dialog.dismiss();
+                Gdx.app.postRunnable(afterOk);
+            }).setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss()).show();
         });
     }
 }

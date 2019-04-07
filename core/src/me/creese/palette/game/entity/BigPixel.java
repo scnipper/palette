@@ -2,6 +2,10 @@ package me.creese.palette.game.entity;
 
 import com.badlogic.gdx.graphics.Color;
 
+import java.util.ArrayList;
+
+import me.creese.palette.game.screens.GameScreen;
+
 public class BigPixel {
     public static final int WIDTH_PIXEL = 32;
     public static final int HEIGHT_PIXEL = 32;
@@ -46,6 +50,15 @@ public class BigPixel {
 
     public void setState(State state) {
         this.state = state;
+        ArrayList<BigPixel> history = squad.getRoot().getGameViewForName(GameScreen.class).getHistory();
+        switch (state) {
+            case WRONG_PAINT:
+                history.remove(this);
+                break;
+            case PAINT:
+                history.add(this);
+                break;
+        }
     }
 
     public Color getColor() {

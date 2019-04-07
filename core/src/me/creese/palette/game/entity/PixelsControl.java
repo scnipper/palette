@@ -19,6 +19,7 @@ public class PixelsControl extends Group {
     private static final float MARGIN = 150;
     private final Actor moveActor;
     private final OrthographicCamera camera;
+    private final Actor zoomActor;
     private float currZoom = P.START_ZOOM;
     private boolean isPan;
     private boolean isZoom;
@@ -37,7 +38,9 @@ public class PixelsControl extends Group {
         camera = (OrthographicCamera) stagePixel.getCamera();
 
         moveActor = new Actor();
+        zoomActor = new Actor();
         addActor(moveActor);
+        addActor(zoomActor);
         addListener(new ActorGestureListener() {
 
             @Override
@@ -159,6 +162,17 @@ public class PixelsControl extends Group {
         });
     }
 
+    public void animateZoomToMax() {
+        zoomActor.setScale(camera.zoom);
+
+        zoomActor.addAction(Actions.sequence(Actions.scaleTo(zoomMax,1,0.5f),Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                isMaxZoom = true;
+                boundPos(false);
+            }
+        })));
+    }
     private void checkCameraZoom() {
         if (camera.zoom > zoomMax) {
             isMaxZoom = true;
@@ -225,13 +239,18 @@ public class PixelsControl extends Group {
         this.downPixelSquad = downPixelSquad;
     }
 
+    public boolean isMaxZoom() {
+        return isMaxZoom;
+    }
+
     public void setRealSize(int realWidth, int realHeight) {
+        isMaxZoom = false;
         this.realWidth = realWidth;
         this.realHeight = realHeight;
 
         zoomMax = (realWidth + MARGIN * 2) / (P.WIDTH);
         checkCameraZoom();
-        if (isMaxZoom) boundPos(false);
+        if (isMaxZoom) animateZoomToMax();
     }
 
     @Override
@@ -247,7 +266,12 @@ public class PixelsControl extends Group {
                 boundPos(true);
             }
 
+        }
 
+        Array<Action> zoomActions = zoomActor.getActions();
+
+        if(zoomActions.size > 0) {
+            camera.zoom = zoomActor.getScaleX();
         }
     }
 }

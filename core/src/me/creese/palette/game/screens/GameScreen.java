@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.utils.SnapshotArray;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -39,6 +39,8 @@ public class GameScreen extends GameView {
     private final ScoreView scoreView;
     private final LoadingActor loadingActor;
     private final BonusGroup bonusGroup;
+    private final ArrayList<BigPixel> history;
+    private final Actor historyActor;
     private PaletteButtons paletteButtons;
     private int xSquadCount;
     private int ySquadCount;
@@ -46,11 +48,15 @@ public class GameScreen extends GameView {
     private int xCurrSquad;
     private int yCurrSquad;
     private BigPixel[][] gridPixels;
+    private int startIndexHistory;
+    private int perIndexCount;
 
     public GameScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
         palette = new ArrayList<>();
-
+        history = new ArrayList<>();
+        historyActor = new Actor();
+        addActor(historyActor);
         loadingActor = new LoadingActor();
 
         stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.rootBatch) {
@@ -70,13 +76,43 @@ public class GameScreen extends GameView {
         stagePixel.addActor(groupPixels);
 
 
-        scoreView = new ScoreView(prepare);
+        scoreView = new ScoreView(root);
         getRoot().addTransitObject(scoreView);
-        addActor(scoreView);
+
 
 
     }
 
+
+    /**
+     * Конец игры
+     */
+    public void gameOver() {
+        pixelsControl.setTouchable(Touchable.disabled);
+        pixelsControl.animateZoomToMax();
+        bonusGroup.clear();
+        paletteButtons.clear();
+        scoreView.remove();
+        groupPixels.fillAllPixels(Color.WHITE);
+
+
+
+        historyActor.addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
+            if(pixelsControl.isMaxZoom()) {
+                for (int i = 0; i < perIndexCount; i++) {
+                    int index = startIndexHistory + i;
+                    if (index < history.size()) {
+                        BigPixel bigPixel = history.get(index);
+                        bigPixel.getSquad().redrawOnePixel(bigPixel.getPosX(), bigPixel.getPosY());
+                    }
+                }
+                startIndexHistory += perIndexCount;
+                if (startIndexHistory >= history.size()) {
+                    historyActor.getActions().clear();
+                }
+            }
+        }))));
+    }
 
     /**
      * Начало игры
@@ -84,11 +120,33 @@ public class GameScreen extends GameView {
      * @throws MaxPaletteException
      */
     public void startGame(Texture texture) throws MaxPaletteException {
+
+        perIndexCount = 5;
+
+        int pixels = texture.getHeight() * texture.getWidth();
+
+        if(pixels > 10000) {
+            perIndexCount = 10;
+        }
+        if(pixels > 20000) {
+            perIndexCount = 20;
+        }
+        if(pixels > 40000) {
+            perIndexCount = 30;
+        }
+
+        if(pixels > 70000) {
+            perIndexCount = 50;
+        }
+
+        startIndexHistory = 0;
+        addActor(scoreView);
         bonusGroup.clear();
         bonusGroup.setActivateBonus(null);
         if (paletteButtons != null) {
             paletteButtons.clearChildren();
         }
+        historyActor.getActions().clear();
         groupPixels.clear();
         palette.clear();
         generatePalette(texture);
@@ -196,6 +254,10 @@ public class GameScreen extends GameView {
 
     public GroupPixels getGroupPixels() {
         return groupPixels;
+    }
+
+    public ArrayList<BigPixel> getHistory() {
+        return history;
     }
 
     @Override
