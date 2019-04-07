@@ -26,6 +26,8 @@ import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.S;
 import me.creese.util.display.Display;
 
+import static me.creese.palette.game.entity.buttons.SelectImageBtn.OPEN;
+
 public class SelectImageMenu extends Group {
 
     private final Display root;
@@ -44,7 +46,6 @@ public class SelectImageMenu extends Group {
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
         moveActor = new Actor();
-        moveActor.setDebug(true);
         moveActor.setWidth(P.WIDTH);
 
 
@@ -87,9 +88,9 @@ public class SelectImageMenu extends Group {
     }
 
     private void addImages() {
+        System.out.println("add images");
         addActor(moveActor);
-        int openImages = P.get().saves.getInteger(S.COUNT_OPEN_IMAGES, -1);
-        int unlockImages = P.get().saves.getInteger(S.COUNT_UNLOCK_IMAGES, 1);
+
 
         xOffset = 120;
         yOffset = 1300;
@@ -98,11 +99,11 @@ public class SelectImageMenu extends Group {
         for (int i = 0; i < P.COUNT_IMAGES; i++) {
             SelectImageBtn selectImage = new SelectImageBtn(root, i,null);
             selectImage.setPosition(xOffset, yOffset);
-            if (i < openImages) {
+           /* if (i < openImages) {
                 selectImage.setState(SelectImageBtn.State.OPEN);
             } else if (i < unlockImages) {
                 selectImage.setState(SelectImageBtn.State.UNLOCK);
-            }
+            }*/
 
             xOffset += 120 + selectImage.getWidth();
 
@@ -111,7 +112,7 @@ public class SelectImageMenu extends Group {
         }
 
         yOffset-=100;
-        inflateMoveActor(300);
+        inflateMoveActor(600);
 
 
         float finalY = yOffset;
@@ -168,7 +169,7 @@ public class SelectImageMenu extends Group {
             for (int i = 0; i < list.length; i++) {
                 SelectImageBtn selectImageBtn = new SelectImageBtn(root, P.COUNT_IMAGES + i, images.getAbsolutePath()+"/"+list[i]);
 
-                selectImageBtn.setState(SelectImageBtn.State.OPEN);
+                selectImageBtn.setState(OPEN);
                 selectImageBtn.setPosition(xOffset,yOffset);
                 addActor(selectImageBtn);
                 xOffset += 120 + selectImageBtn.getWidth();
@@ -210,7 +211,7 @@ public class SelectImageMenu extends Group {
                         parent.getStage().getBatch().getTransformMatrix(),rectangle,scissors);
             }
 
-            SnapshotArray<Actor> children = getChildren();
+           /* SnapshotArray<Actor> children = getChildren();
             if(children.size > 0) {
                 for (Actor child : children) {
                     if(child instanceof SelectImageBtn) {
@@ -218,15 +219,16 @@ public class SelectImageMenu extends Group {
                         selectImage.loadTexture();
                     }
                 }
-            } else {
+            } else {*/
 
                 addImages();
                 addLoadImages();
-            }
+            //}
 
             moveActor.setZIndex(999999);
         } else {
             freeTexturesExcept(-1);
+            clearChildren();
         }
     }
 }

@@ -16,6 +16,7 @@ public class BonusGroup extends Group {
     private final TexturePrepare prepare;
     private final Random random;
     private Bonus activateBonus;
+    private boolean isLock;
 
     public BonusGroup(TexturePrepare prepare) {
         random = new Random();
@@ -24,7 +25,7 @@ public class BonusGroup extends Group {
 
     public void addRandomBonus(float x, float y) {
 
-        if (getChildren().size == 5) return;
+        if (getChildren().size == 5 || isLock) return;
 
         if(random.nextInt(5) == 0) {
 
@@ -61,6 +62,10 @@ public class BonusGroup extends Group {
             }
         }
 
+    }
+
+    public void setLock(boolean lock) {
+        isLock = lock;
     }
 
     private float getYPosBonus(int childNum, Bonus bonus) {

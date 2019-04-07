@@ -20,7 +20,7 @@ public class P {
     public static final Color ACTIVATE_BONUS_COLOR = new Color(0xfdd837ff);
 
 
-    public static final int COUNT_IMAGES = 4;
+    public static final int COUNT_IMAGES = 11;
     public static final float START_ZOOM = 0.4f;
     private static P instance;
     public AssetManager asset;

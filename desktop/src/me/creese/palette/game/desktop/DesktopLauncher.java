@@ -69,7 +69,7 @@ public class DesktopLauncher implements AdUtil,FilenameFilter{
 
 	@Override
 	public void showDialogExit(Runnable afterOk) {
-
+		afterOk.run();
 	}
 
 	@Override

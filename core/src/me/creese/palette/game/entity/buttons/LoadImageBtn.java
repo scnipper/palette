@@ -52,7 +52,7 @@ public class LoadImageBtn extends Actor implements SelectImpl{
                 Texture texture = new Texture(Gdx.files.absolute(path.getAbsolutePath()));
                 root.showGameView(GameScreen.class);
                 try {
-                    root.getGameViewForName(GameScreen.class).startGame(texture);
+                    root.getGameViewForName(GameScreen.class).startGame(texture, -1);
 
                 } catch (MaxPaletteException maxPaletteEcxeption) {
                     root.getTransitObject(AdUtil.class).showToast("Превышен максимальный размер палитры > "+P.MAX_PALETTE_SIZE);

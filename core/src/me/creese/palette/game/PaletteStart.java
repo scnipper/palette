@@ -3,11 +3,13 @@ package me.creese.palette.game;
 import com.badlogic.gdx.Gdx;
 
 import me.creese.palette.game.entity.GroupPixels;
+import me.creese.palette.game.entity.buttons.SelectImageBtn;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.screens.MainScreen;
 import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.P;
+import me.creese.palette.game.util.S;
 import me.creese.util.display.Display;
 
 public class PaletteStart extends Display {
@@ -23,6 +25,13 @@ public class PaletteStart extends Display {
     public void create() {
         addTransitObject(AdUtil.class.getName(),adutil);
         P.get().saves = Gdx.app.getPreferences("sav");
+        String keyImg0 = S.IMG + "0";
+        if (P.get().saves.getInteger(keyImg0) == 0) {
+            P.get().saves.putInteger(keyImg0, SelectImageBtn.UNLOCK);
+            P.get().saves.flush();
+        }
+
+
         Gdx.input.setCatchBackKey(true);
         setBackgroundColor(P.BACKGROUND_COLOR);
         addListGameViews(new Loading(this));

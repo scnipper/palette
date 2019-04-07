@@ -20,12 +20,15 @@ import me.creese.palette.game.entity.PaletteButtons;
 import me.creese.palette.game.entity.PixelsControl;
 import me.creese.palette.game.entity.ScoreView;
 import me.creese.palette.game.entity.SquadPixel;
+import me.creese.palette.game.entity.WinMenu;
 import me.creese.palette.game.entity.bonus.BonusGroup;
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
+import me.creese.palette.game.entity.buttons.SelectImageBtn;
 import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.MaxPaletteException;
 import me.creese.palette.game.util.P;
+import me.creese.palette.game.util.S;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
 import me.creese.util.display.GameView;
@@ -50,6 +53,10 @@ public class GameScreen extends GameView {
     private BigPixel[][] gridPixels;
     private int startIndexHistory;
     private int perIndexCount;
+    private long startTime;
+    private WinMenu winMenu;
+    private boolean isEnd;
+    private int numImage;
 
     public GameScreen(Display root) {
         super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
@@ -79,7 +86,7 @@ public class GameScreen extends GameView {
         scoreView = new ScoreView(root);
         getRoot().addTransitObject(scoreView);
 
-
+        winMenu = new WinMenu(getRoot());
 
     }
 
@@ -88,12 +95,26 @@ public class GameScreen extends GameView {
      * Конец игры
      */
     public void gameOver() {
+
+
+        if(numImage != -1) {
+            P.get().saves.putInteger(S.IMG+numImage, SelectImageBtn.OPEN);
+            P.get().saves.putInteger(S.IMG+(numImage+1), SelectImageBtn.UNLOCK);
+            P.get().saves.flush();
+        }
+
+
         pixelsControl.setTouchable(Touchable.disabled);
         pixelsControl.animateZoomToMax();
+        bonusGroup.setLock(true);
         bonusGroup.clear();
+        bonusGroup.setActivateBonus(null);
         paletteButtons.clear();
         scoreView.remove();
         groupPixels.fillAllPixels(Color.WHITE);
+
+        isEnd = true;
+        winMenu.setEndTime(System.currentTimeMillis() - startTime);
 
 
 
@@ -109,6 +130,15 @@ public class GameScreen extends GameView {
                 startIndexHistory += perIndexCount;
                 if (startIndexHistory >= history.size()) {
                     historyActor.getActions().clear();
+
+                    historyActor.addAction(Actions.sequence(Actions.delay(1.5f),Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            addActor(winMenu);
+                        }
+                    })));
+
                 }
             }
         }))));
@@ -117,10 +147,14 @@ public class GameScreen extends GameView {
     /**
      * Начало игры
      * @param texture текстура которая будет преобразована в сетку
+     * @param numImage
      * @throws MaxPaletteException
      */
-    public void startGame(Texture texture) throws MaxPaletteException {
+    public void startGame(Texture texture, int numImage) throws MaxPaletteException {
 
+        this.numImage = numImage;
+        isEnd = false;
+        winMenu.remove();
         perIndexCount = 5;
 
         int pixels = texture.getHeight() * texture.getWidth();
@@ -143,13 +177,19 @@ public class GameScreen extends GameView {
         addActor(scoreView);
         bonusGroup.clear();
         bonusGroup.setActivateBonus(null);
+        bonusGroup.setLock(false);
         if (paletteButtons != null) {
             paletteButtons.clearChildren();
         }
+        history.clear();
         historyActor.getActions().clear();
         groupPixels.clear();
         palette.clear();
         generatePalette(texture);
+
+
+        scoreView.setCurrPixels(0);
+        startTime = System.currentTimeMillis();
         pixelsControl.setTouchable(Touchable.disabled);
         addActor(loadingActor);
         addPaletteButtons();
@@ -260,6 +300,10 @@ public class GameScreen extends GameView {
         return history;
     }
 
+    public long getStartTime() {
+        return startTime;
+    }
+
     @Override
     protected void postRender() {
         if(isStartLoading) {
@@ -286,7 +330,9 @@ public class GameScreen extends GameView {
     @Override
     public void onBackPress() {
 
+        if(!isEnd)
         getRoot().getTransitObject(AdUtil.class).showDialogExit(() -> getRoot().showGameView(MainScreen.class));
+        else getRoot().showGameView(MainScreen.class);
 
     }
 

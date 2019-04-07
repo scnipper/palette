@@ -7,15 +7,19 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import me.creese.palette.game.entity.SelectImageMenu;
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.MaxPaletteException;
 import me.creese.palette.game.util.P;
+import me.creese.palette.game.util.S;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
 
 public class SelectImageBtn extends Actor implements SelectImpl {
+
+    public static final int LOCK = 0;
+    public static final int UNLOCK = 1;
+    public static final int OPEN = 2;
 
     private final Display root;
     private final Sprite back;
@@ -23,7 +27,7 @@ public class SelectImageBtn extends Actor implements SelectImpl {
     private final int numImage;
     private final String pathTexture;
     private Sprite texture;
-    private State state;
+    private int state;
 
     public SelectImageBtn(Display root, int numImage, String pathTexture) {
         this.pathTexture = pathTexture;
@@ -44,22 +48,24 @@ public class SelectImageBtn extends Actor implements SelectImpl {
         color.a = 0.8f;
         setColor(color);
 
-        setState(State.LOCK);
 
+        int saveState = P.get().saves.getInteger(S.IMG + numImage);
+
+        setState(saveState);
     }
 
     @Override
     public void selectImage() {
-        if (state.equals(State.OPEN) || state.equals(State.UNLOCK)) {
+        if (state == OPEN || state ==UNLOCK) {
 
 
             root.showGameView(GameScreen.class);
             try {
-                root.getGameViewForName(GameScreen.class).startGame(texture.getTexture());
+                root.getGameViewForName(GameScreen.class).startGame(texture.getTexture(),numImage);
             } catch (MaxPaletteException maxPaletteEcxeption) {
                 maxPaletteEcxeption.printStackTrace();
             }
-            ((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
+            //((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
         }
     }
 
@@ -78,7 +84,7 @@ public class SelectImageBtn extends Actor implements SelectImpl {
         }
     }
 
-    public void setState(State state) {
+    public void setState(int state) {
         this.state = state;
         switch (state) {
             case LOCK:
@@ -122,7 +128,4 @@ public class SelectImageBtn extends Actor implements SelectImpl {
 
     }
 
-    public enum State {
-        LOCK, OPEN, UNLOCK
-    }
 }

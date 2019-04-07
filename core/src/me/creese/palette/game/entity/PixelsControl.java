@@ -98,8 +98,8 @@ public class PixelsControl extends Group {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
 
-                Bonus activateBonus = bonusGroup.getActivateBonus();
                 if (isDoubleTap) {
+                    Bonus activateBonus = bonusGroup.getActivateBonus();
 
                     if (activateBonus != null) {
 
@@ -119,7 +119,7 @@ public class PixelsControl extends Group {
                                 bonusGroup.addRandomBonus(event.getStageX(), event.getStageY());
                             }
                         }
-
+                        Bonus activateBonus = bonusGroup.getActivateBonus();
                         if (activateBonus != null ) {
                             GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
 
@@ -170,6 +170,22 @@ public class PixelsControl extends Group {
             public void run() {
                 isMaxZoom = true;
                 boundPos(false);
+
+                addAction(Actions.sequence(Actions.forever(Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(moveActor.getActions().size ==0 ) {
+
+                            //camera.position.y = -((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN);
+                            moveActor.setPosition(camera.position.x,camera.position.y);
+                            moveActor.setUserObject(false);
+                            moveActor.addAction(Actions.moveTo(camera.position.x,-((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN),0.5f));
+                            getActions().clear();
+                        }
+                    }
+                }))));
+
+
             }
         })));
     }
