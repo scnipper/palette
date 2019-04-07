@@ -1,6 +1,7 @@
 package me.creese.palette.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import me.creese.palette.game.entity.GroupPixels;
 import me.creese.palette.game.entity.buttons.SelectImageBtn;
@@ -10,6 +11,7 @@ import me.creese.palette.game.screens.MainScreen;
 import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.S;
+import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
 
 public class PaletteStart extends Display {
@@ -23,6 +25,7 @@ public class PaletteStart extends Display {
 
     @Override
     public void create() {
+        P.get().rootBatch = new SpriteBatch(2000);
         addTransitObject(AdUtil.class.getName(),adutil);
         P.get().saves = Gdx.app.getPreferences("sav");
         String keyImg0 = S.IMG + "0";
@@ -68,5 +71,7 @@ public class PaletteStart extends Display {
         }
         P.get().asset.dispose();
         P.get().saves.flush();
+
+        getTransitObject(TexturePrepare.class).dispose();
     }
 }

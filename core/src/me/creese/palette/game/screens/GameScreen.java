@@ -59,14 +59,14 @@ public class GameScreen extends GameView {
     private int numImage;
 
     public GameScreen(Display root) {
-        super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
+        super(new ExtendViewport(P.WIDTH, P.HEIGHT), root, P.get().rootBatch);
         palette = new ArrayList<>();
         history = new ArrayList<>();
         historyActor = new Actor();
         addActor(historyActor);
         loadingActor = new LoadingActor();
 
-        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.rootBatch) {
+        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.get().rootBatch) {
             @Override
             public void draw() {
                 super.draw();
@@ -230,6 +230,7 @@ public class GameScreen extends GameView {
     private void generatePalette(Texture texture) throws MaxPaletteException {
 
 
+
         scoreView.setTotalPixels(texture.getWidth() * texture.getHeight());
 
         texture.getTextureData().prepare();
@@ -237,11 +238,15 @@ public class GameScreen extends GameView {
 
         gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
 
-
         for (int i = 0; i < texture.getHeight(); i++) {
             for (int j = 0; j < texture.getWidth(); j++) {
 
                 int color = pixmap.getPixel(j, i);
+
+
+                color &= 0xffffff00;
+                color |= 0x000000ff;
+
                 Color colorObj = new Color(color);
                 int numColor = addOrFindColorPalette(colorObj);
                 if(numColor > P.MAX_PALETTE_SIZE) {
@@ -268,7 +273,9 @@ public class GameScreen extends GameView {
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
 
-        camera.position.set(P.WIDTH/2, P.HEIGHT/2, 0);
+
+        camera.position.set(getRootStage().getViewport().getWorldWidth()/2,
+                getRootStage().getViewport().getWorldHeight()/2, 0);
         camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL*camera.zoom) / 2.f,
                 -(texture.getHeight() * BigPixel.HEIGHT_PIXEL *camera.zoom) / 2.f, 0);
 

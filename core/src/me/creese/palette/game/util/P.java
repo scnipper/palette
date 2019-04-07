@@ -24,13 +24,7 @@ public class P {
     public static final float START_ZOOM = 0.4f;
     private static P instance;
     public AssetManager asset;
-    public static final SpriteBatch rootBatch = new SpriteBatch(2000){
-        @Override
-        public void end() {
-            super.end();
-            //System.out.println(renderCalls);
-        }
-    };
+    public SpriteBatch rootBatch;
     public Preferences saves;
 
     public static P get() {

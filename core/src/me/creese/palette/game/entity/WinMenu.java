@@ -29,7 +29,7 @@ public class WinMenu extends Group {
     public WinMenu(Display root) {
         this.root = root;
         shapes = new Shapes();
-        setBounds(P.WIDTH/2-300,700,600,300);
+
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
         hideBtn = new Actor();
@@ -80,6 +80,7 @@ public class WinMenu extends Group {
         super.setParent(parent);
         if (parent != null) {
             timeText = "Ваше время: "+formatTime(endTime/1000);
+            setBounds(parent.getStage().getViewport().getWorldWidth()/2-300,700,600,300);
         }
     }
 

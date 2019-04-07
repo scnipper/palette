@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
 import me.creese.palette.game.util.P;
@@ -15,7 +16,7 @@ public class PaletteButtons extends Group {
     private PaletteButton selectButton;
 
     public PaletteButtons() {
-        setBounds(50, 80, P.WIDTH, 180);
+
 
 
         addListener(new ActorGestureListener() {
@@ -39,8 +40,11 @@ public class PaletteButtons extends Group {
     }
 
     private void checkBounds() {
+        float worldWidth = getStage().getViewport().getWorldWidth();
+
+
         if (getX() > 50) setX(50);
-        if (getX() < -getWidth() + P.WIDTH) setX(-getWidth() + P.WIDTH);
+        if (getX() < -getWidth() + worldWidth) setX(-getWidth() + worldWidth);
     }
 
     public boolean isPan() {
@@ -53,6 +57,14 @@ public class PaletteButtons extends Group {
 
     public void setSelectButton(PaletteButton selectButton) {
         this.selectButton = selectButton;
+    }
+
+    @Override
+    protected void setParent(Group parent) {
+        super.setParent(parent);
+        if (parent != null) {
+            setBounds(50, 80, parent.getStage().getViewport().getWorldWidth(), 180);
+        }
     }
 
     @Override

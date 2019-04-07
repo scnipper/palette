@@ -20,8 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.Align;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
-import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.GameScreen;
+import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.util.display.Display;
@@ -31,7 +31,7 @@ public class SquadPixel extends Actor {
     public static final int WIDTH_SQUAD = 32;
     public static final int HEIGHT_SQUAD = 32;
     private static final float FONT_SCALE = 0.35f;
-    private final OrthographicCamera camera;
+    private OrthographicCamera camera;
     private final BigPixel[][] gridPixels;
     private final int arrX;
     private final int arrY;
@@ -51,24 +51,24 @@ public class SquadPixel extends Actor {
         this.gridPixels = gridPixels;
         this.arrX = arrX;
         this.arrY = arrY;
-        setBounds(arrX * BigPixel.WIDTH_PIXEL, P.HEIGHT - arrY * BigPixel.HEIGHT_PIXEL, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD, BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD);
 
-        moveBy(0, -getHeight());
-        //setDebug(true);
 
-         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) getWidth(), (int) getHeight(), false) {
+
+        setDebug(true);
+
+        frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD,
+                BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD, false) {
             @Override
             protected Texture createTexture(FrameBufferTextureAttachmentSpec attachmentSpec) {
 
-                GLOnlyTextureData data = new GLOnlyTextureData(getWidth(), getHeight(), 0, GL20.GL_RGBA, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE);
+                GLOnlyTextureData data = new GLOnlyTextureData(getWidth(), getHeight(),
+                        0, GL20.GL_RGBA, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE);
 
                 return new Texture(data);
             }
         };
 
-        camera = new OrthographicCamera(getWidth(), getHeight());
-        camera.translate(getWidth() / 2, getHeight() / 2);
-        camera.update();
+
 
         addListener(new InputListener() {
             @Override
@@ -92,7 +92,7 @@ public class SquadPixel extends Actor {
 
 
         //System.out.println("redraw all");
-        SpriteBatch rootBatch = P.rootBatch;
+        SpriteBatch rootBatch = P.get().rootBatch;
         frameBuffer.begin();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -130,11 +130,12 @@ public class SquadPixel extends Actor {
 
     /**
      * Перерисовать один пиксель
+     *
      * @param x
      * @param y
      */
     public void redrawOnePixel(int x, int y) {
-        SpriteBatch rootBatch = P.rootBatch;
+        SpriteBatch rootBatch = P.get().rootBatch;
         frameBuffer.begin();
 
         rootBatch.setProjectionMatrix(camera.combined);
@@ -160,7 +161,7 @@ public class SquadPixel extends Actor {
         BigPixel bigPixel = gridPixels[y + arrY][x + arrX];
         bigPixel.setSquad(this);
 
-        if(fillColor != null) {
+        if (fillColor != null) {
             sprite.setScale(1);
             sprite.setColor(fillColor);
             sprite.draw(batch);
@@ -200,6 +201,7 @@ public class SquadPixel extends Actor {
 
     /**
      * Нажатие на пиксель
+     *
      * @return
      */
     public BigPixel touchDown(boolean isJustGetPixel) {
@@ -214,19 +216,18 @@ public class SquadPixel extends Actor {
             if (indX < gridPixels[indY].length) {
                 bigPixel = gridPixels[indY][indX];
 
-                if(isJustGetPixel)
-                return bigPixel;
+                if (isJustGetPixel) return bigPixel;
 
                 ScoreView scoreView = root.getTransitObject(ScoreView.class);
                 if (selectButton.getNum() == bigPixel.getNumColor()) {
 
-                    if(!bigPixel.getState().equals(BigPixel.State.PAINT)) {
+                    if (!bigPixel.getState().equals(BigPixel.State.PAINT)) {
                         scoreView.iteratePixel();
                         bigPixel.setState(BigPixel.State.PAINT);
 
                     }
                 } else {
-                    if(bigPixel.getState().equals(BigPixel.State.PAINT)) {
+                    if (bigPixel.getState().equals(BigPixel.State.PAINT)) {
                         scoreView.decrementScore(1);
                     }
                     bigPixel.setState(BigPixel.State.WRONG_PAINT);
@@ -247,11 +248,15 @@ public class SquadPixel extends Actor {
     private boolean boundsScreen() {
         float zoom = stageCamera.zoom;
 
-        float xToCamera = (stageCamera.position.x - P.WIDTH / 2 * zoom) * -1;
-        float yToCamera = (stageCamera.position.y - (P.HEIGHT * zoom) / 2) - (getY() - (P.HEIGHT * zoom));
+        float worldWidth = getStage().getViewport().getWorldWidth();
+        float worldHeight = getStage().getViewport().getWorldHeight();
+
+
+        float xToCamera = (stageCamera.position.x - worldWidth / 2 * zoom) * -1;
+        float yToCamera = (stageCamera.position.y - (worldHeight * zoom) / 2) - (getY() - (worldHeight * zoom));
 
         xToCamera += getX();
-        return xToCamera > -getWidth() && xToCamera < P.WIDTH * zoom && yToCamera > 0 && yToCamera < P.HEIGHT * zoom + getHeight();
+        return xToCamera > -getWidth() && xToCamera < worldWidth * zoom && yToCamera > 0 && yToCamera < worldHeight * zoom + getHeight();
     }
 
     public void dispose() {
@@ -298,12 +303,18 @@ public class SquadPixel extends Actor {
         if (bufferTexture != null) {
             if (boundsScreen()) batch.draw(bufferTexture, getX(), getY());
         }
+
     }
 
     @Override
     protected void setParent(Group parent) {
         super.setParent(parent);
         if (parent != null) {
+            setBounds(arrX * BigPixel.WIDTH_PIXEL, parent.getStage().getViewport().getWorldHeight() - arrY * BigPixel.HEIGHT_PIXEL, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD, BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD);
+            moveBy(0, -getHeight());
+            camera = new OrthographicCamera(getWidth(), getHeight());
+            camera.translate(getWidth() / 2, getHeight() / 2);
+            camera.update();
             stageCamera = (OrthographicCamera) parent.getStage().getCamera();
             sprite = ((GroupPixels) parent).getSprite();
             //isRedrawAll = true;

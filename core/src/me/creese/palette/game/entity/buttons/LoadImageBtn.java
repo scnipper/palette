@@ -1,6 +1,7 @@
 package me.creese.palette.game.entity.buttons;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -49,7 +50,7 @@ public class LoadImageBtn extends Actor implements SelectImpl{
 
             if(path != null) {
 
-                Texture texture = new Texture(Gdx.files.absolute(path.getAbsolutePath()));
+                Texture texture = new Texture(Gdx.files.absolute(path.getAbsolutePath()), Pixmap.Format.RGB888,false);
                 root.showGameView(GameScreen.class);
                 try {
                     root.getGameViewForName(GameScreen.class).startGame(texture, -1);

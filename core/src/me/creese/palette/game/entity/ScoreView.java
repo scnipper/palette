@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 
 import javax.xml.soap.Text;
@@ -36,9 +37,8 @@ public class ScoreView extends Actor {
         shadow = prepare.getByName(FTextures.SCORE_BACK_SHADOW);
         shadow.setColor(shadowColor);
 
-        setBounds(P.WIDTH/2-sprite.getWidth()/2,P.HEIGHT-sprite.getHeight()-80,sprite.getWidth(),sprite.getHeight());
-        sprite.setPosition(getX(),getY());
-        shadow.setPosition(getX()+20,getY()-25);
+
+
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
     }
 
@@ -66,6 +66,18 @@ public class ScoreView extends Actor {
     public void setCurrPixels(int currPixels) {
         this.currPixels = currPixels;
         updateDrawText();
+    }
+
+    @Override
+    protected void setParent(Group parent) {
+        super.setParent(parent);
+        if (parent != null) {
+            setBounds(parent.getStage().getViewport().getWorldWidth()/2-sprite.getWidth()/2,
+                    parent.getStage().getViewport().getWorldHeight()-sprite.getHeight()-80,sprite.getWidth(),sprite.getHeight());
+
+            sprite.setPosition(getX(),getY());
+            shadow.setPosition(getX()+20,getY()-25);
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ public class LoadingActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
 
-        FontUtil.drawText(batch,font,loadingText,0,P.HEIGHT-400,0.8f,P.BLACK_FONT_COLOR,P.WIDTH, Align.center);
+        FontUtil.drawText(batch,font,loadingText,0,getStage().getViewport().getWorldHeight()-400,
+                0.8f,P.BLACK_FONT_COLOR,getStage().getViewport().getWorldWidth(), Align.center);
     }
 }

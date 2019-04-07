@@ -34,7 +34,7 @@ public class Loading extends GameView {
 
 
     public Loading(PaletteStart root) {
-        super(new FitViewport(P.WIDTH, P.HEIGHT), root,P.rootBatch);
+        super(new FitViewport(P.WIDTH, P.HEIGHT), root,P.get().rootBatch);
         addActor(new LogoDraw(root));
         load();
     }

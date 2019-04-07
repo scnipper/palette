@@ -74,7 +74,7 @@ public class PaletteButton extends Actor {
         Group parent = getParent();
         float xPos = parent.getX() + getX();
 
-        if(xPos > -getWidth() && xPos < P.WIDTH) {
+        if(xPos > -getWidth() && xPos < getStage().getViewport().getWorldWidth()) {
 
             res.circle.setPosition(getX(), getY());
             res.strokeCircle.setPosition(getX(), getY());

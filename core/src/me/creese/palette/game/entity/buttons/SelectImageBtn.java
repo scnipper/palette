@@ -2,6 +2,7 @@ package me.creese.palette.game.entity.buttons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -74,7 +75,7 @@ public class SelectImageBtn extends Actor implements SelectImpl {
             texture = new Sprite();
         }*/
         if (pathTexture == null) {
-            texture = new Sprite(new Texture("images/image_" + numImage + ".gif"));
+            texture = new Sprite(new Texture(Gdx.files.internal("images/image_" + numImage + ".gif"), Pixmap.Format.RGB888,false));
         } else texture = new Sprite(new Texture(Gdx.files.absolute(pathTexture)));
         texture.setOrigin(0, 0);
         if (texture.getWidth() >= texture.getHeight()) {

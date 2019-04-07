@@ -41,12 +41,12 @@ public class SelectImageMenu extends Group {
 
     public SelectImageMenu(Display root) {
         this.root = root;
-        rectangle = new Rectangle(0,0,P.WIDTH,P.HEIGHT-200);
+
 
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
         moveActor = new Actor();
-        moveActor.setWidth(P.WIDTH);
+
 
 
         moveActor.addListener(new ActorGestureListener(){
@@ -84,7 +84,7 @@ public class SelectImageMenu extends Group {
 
     private void boundPos() {
         if(getY() < 0) setY(0);
-        if(getY() > moveActor.getHeight()-(P.HEIGHT-200)) setY(moveActor.getHeight()-(P.HEIGHT-200));
+        if(getY() > moveActor.getHeight()-(getStage().getViewport().getWorldHeight()-200)) setY(moveActor.getHeight()-(getStage().getViewport().getWorldHeight()-200));
     }
 
     private void addImages() {
@@ -95,7 +95,7 @@ public class SelectImageMenu extends Group {
         xOffset = 120;
         yOffset = 1300;
         moveActor.setPosition(0,0);
-        moveActor.setHeight(P.HEIGHT-200);
+        moveActor.setHeight(getParent().getStage().getViewport().getWorldHeight()-200);
         for (int i = 0; i < P.COUNT_IMAGES; i++) {
             SelectImageBtn selectImage = new SelectImageBtn(root, i,null);
             selectImage.setPosition(xOffset, yOffset);
@@ -119,7 +119,7 @@ public class SelectImageMenu extends Group {
         addActor(new Actor(){
             @Override
             public void draw(Batch batch, float parentAlpha) {
-                FontUtil.drawText(batch,font,"Свое изображение",0, finalY,0.9f,P.BLACK_FONT_COLOR,P.WIDTH, Align.center);
+                FontUtil.drawText(batch,font,"Свое изображение",0, finalY,0.9f,P.BLACK_FONT_COLOR,getStage().getViewport().getWorldWidth(), Align.center);
             }
         });
 
@@ -130,7 +130,7 @@ public class SelectImageMenu extends Group {
     }
 
     private void boundOffset(float width) {
-        if (xOffset + width > P.WIDTH) {
+        if (xOffset + width > getParent().getStage().getViewport().getWorldWidth()) {
             xOffset = 120;
             yOffset -= 400;
             if(yOffset <=0) {
@@ -204,6 +204,9 @@ public class SelectImageMenu extends Group {
         super.setParent(parent);
         if (parent != null) {
 
+            rectangle = new Rectangle(0,0,parent.getStage().getViewport().getWorldWidth(),
+                    parent.getStage().getViewport().getWorldHeight()-200);
+            moveActor.setWidth(parent.getStage().getViewport().getWorldWidth());
             if (scissors == null) {
                 scissors = new Rectangle();
 

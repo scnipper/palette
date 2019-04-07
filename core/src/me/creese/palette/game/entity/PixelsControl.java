@@ -34,7 +34,7 @@ public class PixelsControl extends Group {
     private boolean isOneTap;
 
     public PixelsControl(Stage stagePixel, BonusGroup bonusGroup) {
-        setBounds(0, 0, P.WIDTH, P.HEIGHT);
+
         camera = (OrthographicCamera) stagePixel.getCamera();
 
         moveActor = new Actor();
@@ -176,10 +176,11 @@ public class PixelsControl extends Group {
                     public void run() {
                         if(moveActor.getActions().size ==0 ) {
 
+                            float worldHeight = getStage().getViewport().getWorldHeight();
                             //camera.position.y = -((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN);
                             moveActor.setPosition(camera.position.x,camera.position.y);
                             moveActor.setUserObject(false);
-                            moveActor.addAction(Actions.moveTo(camera.position.x,-((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN),0.5f));
+                            moveActor.addAction(Actions.moveTo(camera.position.x,-((worldHeight * camera.zoom) / 2 - worldHeight - MARGIN),0.5f));
                             getActions().clear();
                         }
                     }
@@ -203,11 +204,12 @@ public class PixelsControl extends Group {
     private void boundPos(boolean isPan) {
 
 
-        float wScreen = P.WIDTH * camera.zoom;
-        float hScreen = P.HEIGHT * camera.zoom;
+        float wScreen = getStage().getViewport().getWorldWidth() * camera.zoom;
+        float hScreen = getStage().getViewport().getWorldHeight() * camera.zoom;
         float setX = camera.position.x;
         float setY = camera.position.y;
 
+        float worldHeight = getStage().getViewport().getWorldHeight();
         if (camera.position.x < wScreen / 2 - MARGIN) {
             setX = wScreen / 2 - MARGIN;
         }
@@ -217,19 +219,21 @@ public class PixelsControl extends Group {
         }
 
 
+
+
         if (!isMaxZoom) {
-            if (camera.position.y > (Math.abs(hScreen / 2 - P.HEIGHT) + MARGIN)) {
-                setY = (Math.abs(hScreen / 2 - P.HEIGHT) + MARGIN);
+            if (camera.position.y > (Math.abs(hScreen / 2 - worldHeight) + MARGIN)) {
+                setY = (Math.abs(hScreen / 2 - worldHeight) + MARGIN);
             }
-            if (camera.position.y < ((realHeight - Math.abs(hScreen / 2 + P.HEIGHT)) + MARGIN) * -1) {
-                setY = ((realHeight - Math.abs(hScreen / 2 + P.HEIGHT)) + MARGIN) * -1;
+            if (camera.position.y < ((realHeight - Math.abs(hScreen / 2 + worldHeight)) + MARGIN) * -1) {
+                setY = ((realHeight - Math.abs(hScreen / 2 + worldHeight)) + MARGIN) * -1;
             }
         } else {
-            if (camera.position.y < -(hScreen / 2 - P.HEIGHT - MARGIN)) {
-                setY = -(hScreen / 2 - P.HEIGHT - MARGIN);
+            if (camera.position.y < -(hScreen / 2 - worldHeight - MARGIN)) {
+                setY = -(hScreen / 2 - worldHeight - MARGIN);
             }
-            if (camera.position.y > hScreen / 2 - realHeight + P.HEIGHT - MARGIN) {
-                setY = hScreen / 2 - realHeight + P.HEIGHT - MARGIN;
+            if (camera.position.y > hScreen / 2 - realHeight + worldHeight - MARGIN) {
+                setY = hScreen / 2 - realHeight + worldHeight - MARGIN;
             }
 
         }
@@ -264,9 +268,17 @@ public class PixelsControl extends Group {
         this.realWidth = realWidth;
         this.realHeight = realHeight;
 
-        zoomMax = (realWidth + MARGIN * 2) / (P.WIDTH);
+        zoomMax = (realWidth + MARGIN * 2) / (getStage().getViewport().getWorldWidth());
         checkCameraZoom();
         if (isMaxZoom) animateZoomToMax();
+    }
+
+    @Override
+    protected void setParent(Group parent) {
+        super.setParent(parent);
+        if (parent != null) {
+            setBounds(0, 0, parent.getStage().getViewport().getWorldWidth(), parent.getStage().getViewport().getWorldHeight());
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 
 import me.creese.palette.game.screens.Loading;
@@ -26,12 +27,20 @@ public class StartMenuButton extends Actor {
 
 
         spriteBack = prepare.getByName(FTextures.SCORE_BACK);
-        setX(P.WIDTH/2-spriteBack.getWidth()/2);
+
         setWidth(spriteBack.getWidth());
         setHeight(spriteBack.getHeight());
         font = P.get().asset.get(Loading.FONT_ROBOTO_BOLD, BitmapFont.class);
 
 
+    }
+
+    @Override
+    protected void setParent(Group parent) {
+        super.setParent(parent);
+        if (parent != null) {
+            setX(parent.getStage().getViewport().getWorldWidth()/2-spriteBack.getWidth()/2);
+        }
     }
 
     @Override

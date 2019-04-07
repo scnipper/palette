@@ -26,6 +26,25 @@ public class DesktopLauncher implements AdUtil,FilenameFilter{
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = 360;
 		config.height = 640;
+
+		/* config.width = 400;
+        config.height = 640;
+
+       config.height = 760;
+        config.width = 360;
+
+         config.height = 600;
+        config.width = 300;
+
+       config.height = 500;
+        config.width = 300;
+
+        config.height = 800;
+        config.width = 600;
+
+        config.height = 651;
+        config.width = 300;*/
+
 		new LwjglApplication(new PaletteStart(new DesktopLauncher()), config);
 	}
 

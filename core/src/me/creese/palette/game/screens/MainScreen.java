@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.creese.palette.game.entity.SelectImageMenu;
@@ -25,7 +26,7 @@ public class MainScreen extends GameView {
     private String headText;
 
     public MainScreen(Display root) {
-        super(new FitViewport(P.WIDTH, P.HEIGHT), root, P.rootBatch);
+        super(new ExtendViewport(P.WIDTH, P.HEIGHT), root, P.get().rootBatch);
 
         addButtons();
 
@@ -33,7 +34,8 @@ public class MainScreen extends GameView {
         addActor(new Actor(){
             @Override
             public void draw(Batch batch, float parentAlpha) {
-                FontUtil.drawText(batch,font,headText,0,P.HEIGHT-100,0.9f,P.BLACK_FONT_COLOR,P.WIDTH, Align.center);
+                FontUtil.drawText(batch,font,headText,0,getRootStage().getViewport().getWorldHeight()-100,
+                        0.9f,P.BLACK_FONT_COLOR,getRootStage().getViewport().getWorldWidth(), Align.center);
             }
         });
 
