@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
 
@@ -66,16 +65,10 @@ public class GameScreen extends GameView {
         addActor(historyActor);
         loadingActor = new LoadingActor();
 
-        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.get().rootBatch) {
-            @Override
-            public void draw() {
-                super.draw();
-                //System.out.println(((SpriteBatch) stagePixel.getBatch()).renderCalls);
-            }
-        };
+        stagePixel = new Stage(new ExtendViewport(P.WIDTH, P.HEIGHT), P.get().rootBatch);
         TexturePrepare prepare = getRoot().getTransitObject(TexturePrepare.class);
         bonusGroup = new BonusGroup(prepare);
-        pixelsControl = new PixelsControl(stagePixel,bonusGroup);
+        pixelsControl = new PixelsControl(stagePixel, bonusGroup);
         addActor(pixelsControl);
         addActor(bonusGroup);
         addStage(stagePixel, 0);
@@ -97,11 +90,15 @@ public class GameScreen extends GameView {
     public void gameOver() {
 
 
-        if(numImage != -1) {
-            P.get().saves.putInteger(S.IMG+numImage, SelectImageBtn.OPEN);
-            P.get().saves.putInteger(S.IMG+(numImage+1), SelectImageBtn.UNLOCK);
-            P.get().saves.flush();
+        if (numImage != -1) {
+            P.get().saves.putInteger(S.IMG + numImage, SelectImageBtn.OPEN);
+            P.get().saves.putInteger(S.IMG + (numImage + 1), SelectImageBtn.UNLOCK);
+
         }
+
+        int pixels = gridPixels.length * gridPixels[0].length;
+
+        savePixels(pixels);
 
 
         pixelsControl.setTouchable(Touchable.disabled);
@@ -114,12 +111,15 @@ public class GameScreen extends GameView {
         groupPixels.fillAllPixels(Color.WHITE);
 
         isEnd = true;
-        winMenu.setEndTime(System.currentTimeMillis() - startTime);
 
+        long endTime = System.currentTimeMillis() - startTime;
+        saveEndTime(endTime);
+        P.get().saves.flush();
+        winMenu.setEndTime(endTime);
 
 
         historyActor.addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
-            if(pixelsControl.isMaxZoom()) {
+            if (pixelsControl.isMaxZoom()) {
                 for (int i = 0; i < perIndexCount; i++) {
                     int index = startIndexHistory + i;
                     if (index < history.size()) {
@@ -131,7 +131,7 @@ public class GameScreen extends GameView {
                 if (startIndexHistory >= history.size()) {
                     historyActor.getActions().clear();
 
-                    historyActor.addAction(Actions.sequence(Actions.delay(1.5f),Actions.run(new Runnable() {
+                    historyActor.addAction(Actions.sequence(Actions.delay(1.5f), Actions.run(new Runnable() {
                         @Override
                         public void run() {
 
@@ -144,9 +144,23 @@ public class GameScreen extends GameView {
         }))));
     }
 
+    private void saveEndTime(long time) {
+        long allTime = P.get().saves.getLong(S.ALL_TIME);
+
+        P.get().saves.putLong(S.ALL_TIME, allTime + time);
+    }
+
+
+    private void savePixels(int pixels) {
+        long alreadyPaint = P.get().saves.getLong(S.PIXELS_PAINT);
+
+        P.get().saves.putLong(S.PIXELS_PAINT, alreadyPaint + pixels);
+    }
+
     /**
      * Начало игры
-     * @param texture текстура которая будет преобразована в сетку
+     *
+     * @param texture  текстура которая будет преобразована в сетку
      * @param numImage
      * @throws MaxPaletteException
      */
@@ -159,17 +173,17 @@ public class GameScreen extends GameView {
 
         int pixels = texture.getHeight() * texture.getWidth();
 
-        if(pixels > 10000) {
+        if (pixels > 10000) {
             perIndexCount = 10;
         }
-        if(pixels > 20000) {
+        if (pixels > 20000) {
             perIndexCount = 20;
         }
-        if(pixels > 40000) {
+        if (pixels > 40000) {
             perIndexCount = 30;
         }
 
-        if(pixels > 70000) {
+        if (pixels > 70000) {
             perIndexCount = 50;
         }
 
@@ -224,11 +238,11 @@ public class GameScreen extends GameView {
 
     /**
      * Создание палитры
+     *
      * @param texture
      * @throws MaxPaletteException
      */
     private void generatePalette(Texture texture) throws MaxPaletteException {
-
 
 
         scoreView.setTotalPixels(texture.getWidth() * texture.getHeight());
@@ -249,8 +263,8 @@ public class GameScreen extends GameView {
 
                 Color colorObj = new Color(color);
                 int numColor = addOrFindColorPalette(colorObj);
-                if(numColor > P.MAX_PALETTE_SIZE) {
-                    throw new MaxPaletteException("Palette > "+P.MAX_PALETTE_SIZE);
+                if (numColor > P.MAX_PALETTE_SIZE) {
+                    throw new MaxPaletteException("Palette > " + P.MAX_PALETTE_SIZE);
                 }
 
                 BigPixel bigPixel = new BigPixel(numColor, colorObj, j, i);
@@ -274,10 +288,8 @@ public class GameScreen extends GameView {
         camera.zoom = P.START_ZOOM;
 
 
-        camera.position.set(getRootStage().getViewport().getWorldWidth()/2,
-                getRootStage().getViewport().getWorldHeight()/2, 0);
-        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL*camera.zoom) / 2.f,
-                -(texture.getHeight() * BigPixel.HEIGHT_PIXEL *camera.zoom) / 2.f, 0);
+        camera.position.set(getRootStage().getViewport().getWorldWidth() / 2, getRootStage().getViewport().getWorldHeight() / 2, 0);
+        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL * camera.zoom) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL * camera.zoom) / 2.f, 0);
 
         texture.dispose();
 
@@ -286,6 +298,7 @@ public class GameScreen extends GameView {
 
     /**
      * Добавление цвета в палитру или если он добавлен только возвращать номер
+     *
      * @param color
      * @return
      */
@@ -313,18 +326,17 @@ public class GameScreen extends GameView {
 
     @Override
     protected void postRender() {
-        if(isStartLoading) {
-            SquadPixel squadPixel = new SquadPixel(getRoot(), gridPixels, xCurrSquad * SquadPixel.WIDTH_SQUAD,
-                    yCurrSquad * SquadPixel.HEIGHT_SQUAD);
+        if (isStartLoading) {
+            SquadPixel squadPixel = new SquadPixel(getRoot(), gridPixels, xCurrSquad * SquadPixel.WIDTH_SQUAD, yCurrSquad * SquadPixel.HEIGHT_SQUAD);
             groupPixels.addActor(squadPixel);
 
             xCurrSquad++;
 
-            loadingActor.setPercent((yCurrSquad*xSquadCount + xSquadCount) / ((float)xSquadCount * ySquadCount));
-            if(xCurrSquad == xSquadCount) {
+            loadingActor.setPercent((yCurrSquad * xSquadCount + xSquadCount) / ((float) xSquadCount * ySquadCount));
+            if (xCurrSquad == xSquadCount) {
                 xCurrSquad = 0;
                 yCurrSquad++;
-                if(yCurrSquad == ySquadCount) {
+                if (yCurrSquad == ySquadCount) {
                     isStartLoading = false;
                     loadingActor.remove();
                     pixelsControl.setTouchable(Touchable.enabled);
@@ -337,9 +349,15 @@ public class GameScreen extends GameView {
     @Override
     public void onBackPress() {
 
-        if(!isEnd)
-        getRoot().getTransitObject(AdUtil.class).showDialogExit(() -> getRoot().showGameView(MainScreen.class));
-        else getRoot().showGameView(MainScreen.class);
+        if (!isEnd) {
+            getRoot().getTransitObject(AdUtil.class).showDialogExit(() -> {
+                savePixels(history.size());
+                saveEndTime(System.currentTimeMillis() - startTime);
+                P.get().saves.flush();
+                getRoot().showGameView(MainScreen.class);
+
+            });
+        } else getRoot().showGameView(MainScreen.class);
 
     }
 

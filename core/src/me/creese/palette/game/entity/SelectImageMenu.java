@@ -88,7 +88,6 @@ public class SelectImageMenu extends Group {
     }
 
     private void addImages() {
-        System.out.println("add images");
         addActor(moveActor);
 
 
@@ -165,14 +164,19 @@ public class SelectImageMenu extends Group {
 
 
         String[] list = images.list();
+
         if (list != null) {
             for (int i = 0; i < list.length; i++) {
                 SelectImageBtn selectImageBtn = new SelectImageBtn(root, P.COUNT_IMAGES + i, images.getAbsolutePath()+"/"+list[i]);
 
+                if(i == 0) {
+                    xOffset-= 120+selectImageBtn.getWidth();
+                }
+
                 selectImageBtn.setState(OPEN);
                 selectImageBtn.setPosition(xOffset,yOffset);
-                addActor(selectImageBtn);
                 xOffset += 120 + selectImageBtn.getWidth();
+                addActor(selectImageBtn);
                 boundOffset(selectImageBtn.getWidth());
 
 

@@ -31,10 +31,16 @@ public class PaletteStart extends Display {
         String keyImg0 = S.IMG + "0";
         if (P.get().saves.getInteger(keyImg0) == 0) {
             P.get().saves.putInteger(keyImg0, SelectImageBtn.UNLOCK);
-            P.get().saves.flush();
+
         }
 
+        long launches = P.get().saves.getLong(S.COUNT_LAUNCH);
+        launches++;
+        P.get().saves.putLong(S.COUNT_LAUNCH,launches);
 
+
+
+        P.get().saves.flush();
         Gdx.input.setCatchBackKey(true);
         setBackgroundColor(P.BACKGROUND_COLOR);
         addListGameViews(new Loading(this));

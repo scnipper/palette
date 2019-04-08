@@ -34,8 +34,8 @@ public class WinMenu extends Group {
 
         hideBtn = new Actor();
         backBtn = new Actor();
-        hideBtn.setBounds(50,30,150,50);
-        backBtn.setBounds(getWidth()-200,30,150,50);
+
+
 
         hideBtn.addListener(new ActorGestureListener(){
             @Override
@@ -81,6 +81,8 @@ public class WinMenu extends Group {
         if (parent != null) {
             timeText = "Ваше время: "+formatTime(endTime/1000);
             setBounds(parent.getStage().getViewport().getWorldWidth()/2-300,700,600,300);
+            hideBtn.setBounds(50,30,150,50);
+            backBtn.setBounds(getWidth()-200,30,150,50);
         }
     }
 
