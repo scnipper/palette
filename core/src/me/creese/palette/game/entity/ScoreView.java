@@ -8,8 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Align;
 
-import javax.xml.soap.Text;
-
 import me.creese.palette.game.screens.GameScreen;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.FTextures;
@@ -51,13 +49,16 @@ public class ScoreView extends Actor {
         updateDrawText();
     }
 
-    public void iteratePixel() {
+    public boolean iteratePixel() {
         currPixels++;
         updateDrawText();
 
         if(currPixels >= totalPixels ) {
+
             root.getGameViewForName(GameScreen.class).gameOver();
+            return true;
         }
+        return false;
     }
     public void decrementScore(int delta) {
         currPixels-=delta;

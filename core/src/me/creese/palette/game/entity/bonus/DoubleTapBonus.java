@@ -36,7 +36,6 @@ public class DoubleTapBonus extends Bonus {
 
 
     private void paintPixel(BigPixel bigPixel) {
-        System.out.println("paint pixel " + getActions().size);
 
         //if(bigPixel.getState().equals(BigPixel.State.PAINT)) return;
 
@@ -88,6 +87,7 @@ public class DoubleTapBonus extends Bonus {
                 addAction(Actions.run(new Runnable() {
                     @Override
                     public void run() {
+
                         squad.redrawOnePixel(bigPixel.getPosX(), bigPixel.getPosY());
                         squad.getRoot().getTransitObject(ScoreView.class).iteratePixel();
 
@@ -98,6 +98,8 @@ public class DoubleTapBonus extends Bonus {
             //if (endPixel == null) {
             //endPixel = bigPixel;
             //}
+            bigPixel.setState(BigPixel.State.NOT_PAINT);
+            bigPixel.setBonusAdd(false);
             return;
         }
 

@@ -54,7 +54,7 @@ public class SquadPixel extends Actor {
 
 
 
-        setDebug(true);
+        //setDebug(true);
 
         frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, BigPixel.WIDTH_PIXEL * WIDTH_SQUAD,
                 BigPixel.HEIGHT_PIXEL * HEIGHT_SQUAD, false) {
@@ -219,10 +219,11 @@ public class SquadPixel extends Actor {
                 if (isJustGetPixel) return bigPixel;
 
                 ScoreView scoreView = root.getTransitObject(ScoreView.class);
+                boolean isRedraw = false;
                 if (selectButton.getNum() == bigPixel.getNumColor()) {
 
                     if (!bigPixel.getState().equals(BigPixel.State.PAINT)) {
-                        scoreView.iteratePixel();
+                        isRedraw = scoreView.iteratePixel();
                         bigPixel.setState(BigPixel.State.PAINT);
 
                     }
@@ -235,6 +236,7 @@ public class SquadPixel extends Actor {
                     color.a = 0.5f;
                     bigPixel.setWrongColor(color);
                 }
+                if(!isRedraw)
                 redrawOnePixel(indX, indY);
             }
         }

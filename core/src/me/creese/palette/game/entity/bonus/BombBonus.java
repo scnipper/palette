@@ -35,9 +35,10 @@ public class BombBonus extends Bonus {
                 if (j < gridPixels.length && j >= 0 ) {
                     if (i < gridPixels[j].length && i >= 0) {
                         BigPixel pixel = gridPixels[j][i];
-                        pixel.setBonusAdd(true);
+
 
                         if (!pixel.getState().equals(BigPixel.State.PAINT)) {
+                            pixel.setBonusAdd(true);
                             pixel.setState(BigPixel.State.PAINT);
                             scoreView.iteratePixel();
                          /*   if (!firstNoIterate) scoreView.iteratePixel();

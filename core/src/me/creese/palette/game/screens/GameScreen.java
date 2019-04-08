@@ -119,7 +119,7 @@ public class GameScreen extends GameView {
 
 
         historyActor.addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
-            if (pixelsControl.isMaxZoom()) {
+            if (pixelsControl.isMaxWidthZoom()) {
                 for (int i = 0; i < perIndexCount; i++) {
                     int index = startIndexHistory + i;
                     if (index < history.size()) {
@@ -282,14 +282,19 @@ public class GameScreen extends GameView {
 
         isStartLoading = true;
 
-        pixelsControl.setRealSize(texture.getWidth() * BigPixel.WIDTH_PIXEL, texture.getHeight() * BigPixel.HEIGHT_PIXEL);
-
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
+        pixelsControl.setRealSize(texture.getWidth() * BigPixel.WIDTH_PIXEL, texture.getHeight() * BigPixel.HEIGHT_PIXEL);
 
 
-        camera.position.set(getRootStage().getViewport().getWorldWidth() / 2, getRootStage().getViewport().getWorldHeight() / 2, 0);
-        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL * camera.zoom) / 2.f, -(texture.getHeight() * BigPixel.HEIGHT_PIXEL * camera.zoom) / 2.f, 0);
+
+
+        float halfWidth = getRootStage().getViewport().getWorldWidth() / 2;
+        float halfHeight = getRootStage().getViewport().getWorldHeight() / 2;
+        camera.position.set(halfWidth*camera.zoom,
+                getRootStage().getViewport().getWorldHeight() -halfHeight*camera.zoom, 0);
+        camera.translate((texture.getWidth() * BigPixel.WIDTH_PIXEL) / 2.f-halfWidth*camera.zoom ,
+                -(texture.getHeight() * BigPixel.HEIGHT_PIXEL) / 2.f +halfHeight*camera.zoom, 0);
 
         texture.dispose();
 

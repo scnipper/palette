@@ -26,12 +26,13 @@ public class PixelsControl extends Group {
     private SquadPixel downPixelSquad;
     private int realWidth;
     private int realHeight;
-    private boolean isMaxZoom;
+    private boolean isMaxWidthZoom;
     private boolean isMoveToMaxZoom;
-    private float zoomMax;
+    private float zoomMaxWidth;
     private boolean isDoubleTap;
     private BigPixel lastBigPixel;
-    private boolean isOneTap;
+    private boolean isMaxHeightZoom;
+    private float zoomMaxHeight;
 
     public PixelsControl(Stage stagePixel, BonusGroup bonusGroup) {
 
@@ -45,10 +46,6 @@ public class PixelsControl extends Group {
 
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-
-
-
-                if (count == 1) isOneTap = true;
                 if (count >= 2) isDoubleTap = true;
             }
 
@@ -68,12 +65,10 @@ public class PixelsControl extends Group {
                     continuePan = activateBonus.panFinger(groupPixel,PixelsControl.this,lastBigPixel);
                 }*/
 
-                    float zoom = camera.zoom;
-                    camera.translate(-(deltaX * 2 * zoom), -(deltaY * 2 * zoom));
+                float zoom = camera.zoom;
+                camera.translate(-(deltaX * 2 * zoom), -(deltaY * 2 * zoom));
 
-                    if (moveActor.getActions().size == 0) boundPos(true);
-
-
+                if (moveActor.getActions().size == 0) boundPos(true);
 
 
             }
@@ -120,10 +115,10 @@ public class PixelsControl extends Group {
                             }
                         }
                         Bonus activateBonus = bonusGroup.getActivateBonus();
-                        if (activateBonus != null ) {
+                        if (activateBonus != null) {
                             GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
 
-                            activateBonus.upFinger(groupPixel,PixelsControl.this,lastBigPixel);
+                            activateBonus.upFinger(groupPixel, PixelsControl.this, lastBigPixel);
                         }
                     }
 
@@ -137,7 +132,7 @@ public class PixelsControl extends Group {
                     boundPos(false);
                 }
 
-         /*       if (isMaxZoom && isZoom) {
+         /*       if (isMaxWidthZoom && isZoom) {
                     float heightScreen = P.HEIGHT - ((P.HEIGHT / 2) * (camera.zoom));
                     moveActor.setPosition(camera.position.x,camera.position.y);
                     moveActor.addAction(Actions.moveTo((P.WIDTH*camera.zoom)/2-150,
@@ -153,7 +148,7 @@ public class PixelsControl extends Group {
 
             @Override
             public void fling(InputEvent event, float velocityX, float velocityY, int button) {
-                if ((Math.abs(velocityX) > 1000 || Math.abs(velocityY) > 1000) && moveActor.getActions().size == 0 && !isMaxZoom) {
+                if ((Math.abs(velocityX) > 1000 || Math.abs(velocityY) > 1000) && moveActor.getActions().size == 0 && !isMaxWidthZoom) {
                     moveActor.setPosition(camera.position.x, camera.position.y);
                     moveActor.setUserObject(true);
                     moveActor.addAction(Actions.moveBy(-velocityX, -velocityY, 0.7f));
@@ -165,22 +160,22 @@ public class PixelsControl extends Group {
     public void animateZoomToMax() {
         zoomActor.setScale(camera.zoom);
 
-        zoomActor.addAction(Actions.sequence(Actions.scaleTo(zoomMax,1,0.5f),Actions.run(new Runnable() {
+        zoomActor.addAction(Actions.sequence(Actions.scaleTo(zoomMaxWidth, 1, 0.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                isMaxZoom = true;
+                isMaxWidthZoom = true;
                 boundPos(false);
 
                 addAction(Actions.sequence(Actions.forever(Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        if(moveActor.getActions().size ==0 ) {
+                        if (moveActor.getActions().size == 0) {
 
                             float worldHeight = getStage().getViewport().getWorldHeight();
                             //camera.position.y = -((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN);
-                            moveActor.setPosition(camera.position.x,camera.position.y);
+                            moveActor.setPosition(camera.position.x, camera.position.y);
                             moveActor.setUserObject(false);
-                            moveActor.addAction(Actions.moveTo(camera.position.x,-((worldHeight * camera.zoom) / 2 - worldHeight - MARGIN),0.5f));
+                            moveActor.addAction(Actions.moveTo(camera.position.x, -((worldHeight * camera.zoom) / 2 - worldHeight - MARGIN), 0.5f));
                             getActions().clear();
                         }
                     }
@@ -190,12 +185,16 @@ public class PixelsControl extends Group {
             }
         })));
     }
+
     private void checkCameraZoom() {
-        if (camera.zoom > zoomMax) {
-            isMaxZoom = true;
-            camera.zoom = zoomMax;
+        if (camera.zoom > zoomMaxWidth) {
+            isMaxWidthZoom = true;
+            camera.zoom = zoomMaxWidth;
         } else {
-            isMaxZoom = false;
+
+            isMaxHeightZoom = camera.zoom > zoomMaxHeight;
+
+            isMaxWidthZoom = false;
             isMoveToMaxZoom = false;
 
         }
@@ -219,9 +218,7 @@ public class PixelsControl extends Group {
         }
 
 
-
-
-        if (!isMaxZoom) {
+        if (!isMaxHeightZoom) {
             if (camera.position.y > (Math.abs(hScreen / 2 - worldHeight) + MARGIN)) {
                 setY = (Math.abs(hScreen / 2 - worldHeight) + MARGIN);
             }
@@ -259,18 +256,22 @@ public class PixelsControl extends Group {
         this.downPixelSquad = downPixelSquad;
     }
 
-    public boolean isMaxZoom() {
-        return isMaxZoom;
+    public boolean isMaxWidthZoom() {
+        return isMaxWidthZoom;
     }
 
     public void setRealSize(int realWidth, int realHeight) {
-        isMaxZoom = false;
+        isMaxWidthZoom = false;
+        currZoom = P.START_ZOOM;
         this.realWidth = realWidth;
         this.realHeight = realHeight;
 
-        zoomMax = (realWidth + MARGIN * 2) / (getStage().getViewport().getWorldWidth());
+        zoomMaxWidth = (realWidth + MARGIN * 2) / (getStage().getViewport().getWorldWidth());
+        zoomMaxHeight = (realHeight + MARGIN * 2) / (getStage().getViewport().getWorldHeight());
         checkCameraZoom();
-        if (isMaxZoom) animateZoomToMax();
+        isMaxHeightZoom = false;
+        if (isMaxWidthZoom) animateZoomToMax();
+
     }
 
     @Override
@@ -298,7 +299,7 @@ public class PixelsControl extends Group {
 
         Array<Action> zoomActions = zoomActor.getActions();
 
-        if(zoomActions.size > 0) {
+        if (zoomActions.size > 0) {
             camera.zoom = zoomActor.getScaleX();
         }
     }
