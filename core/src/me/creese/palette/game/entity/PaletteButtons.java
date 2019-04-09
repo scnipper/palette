@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
 
+/**
+ * Контейнер с кнопками палитры
+ */
 public class PaletteButtons extends Group {
 
 

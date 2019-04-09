@@ -6,6 +6,7 @@ import me.creese.palette.game.entity.PixelsControl;
 import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.TexturePrepare;
 
+
 public class HoldBonus extends Bonus {
     public HoldBonus(TexturePrepare prepare) {
         super(prepare);

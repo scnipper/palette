@@ -16,6 +16,9 @@ import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.Display;
 
+/**
+ * Счетчик закрашенных пикселей
+ */
 public class ScoreView extends Actor {
 
     private static final float PERCENT_TO_ADD_MORE_SECRET_PIXELS = 0.8f;

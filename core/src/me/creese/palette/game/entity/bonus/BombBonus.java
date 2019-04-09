@@ -1,7 +1,6 @@
 package me.creese.palette.game.entity.bonus;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 import me.creese.palette.game.entity.BigPixel;
 import me.creese.palette.game.entity.GroupPixels;
@@ -23,7 +22,7 @@ public class BombBonus extends Bonus {
     @Override
     public void upFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel) {
 
-        if(!bigPixel.isVisible()) return;
+        if (!bigPixel.isVisible()) return;
         Color pixelColor = bigPixel.getColor().cpy();
         pixelColor.a = 0.5f;
         SquadPixel squad = bigPixel.getSquad();
@@ -31,9 +30,9 @@ public class BombBonus extends Bonus {
         ScoreView scoreView = squad.getRoot().getTransitObject(ScoreView.class);
 
 
-        for (int i = bigPixel.getPosX()-5; i < bigPixel.getPosX()+5; i++) {
-            for (int j = bigPixel.getPosY()-5; j < bigPixel.getPosY()+5; j++) {
-                if (j < gridPixels.length && j >= 0 ) {
+        for (int i = bigPixel.getPosX() - 5; i < bigPixel.getPosX() + 5; i++) {
+            for (int j = bigPixel.getPosY() - 5; j < bigPixel.getPosY() + 5; j++) {
+                if (j < gridPixels.length && j >= 0) {
                     if (i < gridPixels[j].length && i >= 0) {
                         BigPixel pixel = gridPixels[j][i];
 
@@ -42,16 +41,8 @@ public class BombBonus extends Bonus {
                             pixel.setBonusAdd(true);
                             pixel.setState(BigPixel.State.PAINT);
                             scoreView.iteratePixel();
-                         /*   if (!firstNoIterate) scoreView.iteratePixel();
-                            else firstNoIterate = false;*/
                         }
-                        /*} else {
-                            if(pixel.getState().equals(BigPixel.State.PAINT))
-                                scoreView.decrementScore(1);
-                            pixel.setState(BigPixel.State.WRONG_PAINT);
 
-                            pixel.setWrongColor(pixelColor);
-                        }*/
                         pixel.getSquad().redrawOnePixel(i, j);
                     }
                 }

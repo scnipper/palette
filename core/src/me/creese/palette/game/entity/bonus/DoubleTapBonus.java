@@ -19,8 +19,6 @@ public class DoubleTapBonus extends Bonus {
     private int startNumColor = -1;
     private boolean isStepActions;
     private int indexStepActions;
-    private int deepRecursive;
-    private BigPixel endPixel;
     private int speedDraw;
 
 
@@ -35,6 +33,10 @@ public class DoubleTapBonus extends Bonus {
     }
 
 
+    /**
+     * Рекурсивная функция закрашивания пикселей
+     * @param bigPixel Начальный пиксель
+     */
     private void paintPixel(BigPixel bigPixel) {
 
         //if(bigPixel.getState().equals(BigPixel.State.PAINT)) return;
@@ -51,37 +53,6 @@ public class DoubleTapBonus extends Bonus {
 
         bigPixel.setState(BigPixel.State.PAINT);
         bigPixel.setBonusAdd(true);
-
-      /*  addAction(Actions.run(() -> squad.redrawOnePixel(bigPixel.getPosX(), bigPixel.getPosY())));
-
-
-        int yStart = yPlus;
-        while (yStart < gridPixels.length ) {
-            BigPixel pixel = gridPixels[yPlus][bigPixel.getPosX()];
-            if(pixel.getState().equals(BigPixel.State.NOT_PAINT) && pixel.getNumColor() == startNumColor) {
-                pixel.setState(BigPixel.State.PAINT);
-                addAction(Actions.run(() -> squad.redrawOnePixel(pixel.getPosX(), pixel.getPosY())));
-                yStart++;
-            } else {
-
-                break;
-
-            }
-        }
-        yStart = yMinus;
-        while (yStart >= 0) {
-            BigPixel pixel = gridPixels[yStart][bigPixel.getPosX()];
-            if(pixel.getState().equals(BigPixel.State.NOT_PAINT) && pixel.getNumColor() == startNumColor) {
-                pixel.setState(BigPixel.State.PAINT);
-                addAction(Actions.run(() -> squad.redrawOnePixel(pixel.getPosX(), pixel.getPosY())));
-                yStart--;
-            } else {
-
-                break;
-            }
-        }*/
-
-
         if (getActions().size < 3000) {
 
 
@@ -97,9 +68,6 @@ public class DoubleTapBonus extends Bonus {
                 }));
 
         } else {
-            //if (endPixel == null) {
-            //endPixel = bigPixel;
-            //}
             bigPixel.setState(BigPixel.State.NOT_PAINT);
             bigPixel.setBonusAdd(false);
             return;
@@ -135,35 +103,6 @@ public class DoubleTapBonus extends Bonus {
             }
         }
 
-
-        /*if(yPlus < gridPixels.length && xPlus < gridPixels[bigPixel.getPosY()].length) {
-            BigPixel topRightPixel = gridPixels[yPlus][xPlus];
-            if(topRightPixel.getNumColor() == startNumColor) {
-                paintPixel(topRightPixel);
-            }
-        }
-
-        if(yMinus > 0 && xPlus < gridPixels[bigPixel.getPosY()].length) {
-            BigPixel bottomRightPixel = gridPixels[yMinus][xPlus];
-            if(bottomRightPixel.getNumColor() == startNumColor) {
-                paintPixel(bottomRightPixel);
-            }
-        }
-
-        if(yMinus > 0 && xMinus > 0) {
-            BigPixel bottomLeftPixel = gridPixels[yMinus][xMinus];
-            if(bottomLeftPixel.getNumColor() == startNumColor) {
-                paintPixel(bottomLeftPixel);
-            }
-        }
-
-        if(yPlus < gridPixels.length && xMinus > 0) {
-
-            BigPixel topLeftPixel = gridPixels[yPlus][xMinus];
-            if(topLeftPixel.getNumColor() == startNumColor) {
-                paintPixel(topLeftPixel);
-            }
-        }*/
     }
 
     @Override

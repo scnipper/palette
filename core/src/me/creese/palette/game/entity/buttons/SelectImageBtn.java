@@ -18,8 +18,11 @@ import me.creese.util.display.Display;
 
 public class SelectImageBtn extends Actor implements SelectImpl {
 
+    // изображение заблокировано виден запрещающий знак
     public static final int LOCK = 0;
+    // изображение разблокировано
     public static final int UNLOCK = 1;
+    // изображение открыто, показывается миниатюра картинки
     public static final int OPEN = 2;
 
     private final Display root;
@@ -66,14 +69,13 @@ public class SelectImageBtn extends Actor implements SelectImpl {
             } catch (MaxPaletteException maxPaletteEcxeption) {
                 maxPaletteEcxeption.printStackTrace();
             }
-            //((SelectImageMenu) getParent()).freeTexturesExcept(numImage);
         }
     }
 
+    /**
+     * Загрузка текстуры
+     */
     public void loadTexture() {
-/*        if (texture == null) {
-            texture = new Sprite();
-        }*/
         if (pathTexture == null) {
             texture = new Sprite(new Texture(Gdx.files.internal("images/image_" + numImage + ".gif"), Pixmap.Format.RGB888,false));
         } else texture = new Sprite(new Texture(Gdx.files.absolute(pathTexture)));
@@ -117,12 +119,6 @@ public class SelectImageBtn extends Actor implements SelectImpl {
                 texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
                 texture.draw(batch);
                 break;
-/*            case UNLOCK:
-                texture.setPosition(getX() + getWidth() / 2 - (texture.getWidth() * texture.getScaleX()) / 2, getY() + getHeight() / 2 - (texture.getHeight() * texture.getScaleY()) / 2);
-                texture.draw(batch);
-                back.setColor(getColor());
-                back.draw(batch);
-                back.setColor(Color.WHITE);*/
 
         }
 

@@ -12,18 +12,18 @@ import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
-import me.creese.util.display.Display;
 
+/**
+ * Кнопка начального экрана
+ */
 public class StartMenuButton extends Actor {
 
     private final Sprite spriteBack;
     private final BitmapFont font;
     private final String text;
 
-    public StartMenuButton(TexturePrepare prepare,String text) {
+    public StartMenuButton(TexturePrepare prepare, String text) {
         this.text = text;
-
-
 
 
         spriteBack = prepare.getByName(FTextures.SCORE_BACK);
@@ -39,15 +39,15 @@ public class StartMenuButton extends Actor {
     protected void setParent(Group parent) {
         super.setParent(parent);
         if (parent != null) {
-            setX(parent.getStage().getViewport().getWorldWidth()/2-spriteBack.getWidth()/2);
+            setX(parent.getStage().getViewport().getWorldWidth() / 2 - spriteBack.getWidth() / 2);
         }
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        spriteBack.setPosition(getX(),getY());
+        spriteBack.setPosition(getX(), getY());
         spriteBack.draw(batch);
 
-        FontUtil.drawText(batch,font,text,getX(),getY(),0.6f,P.BLACK_FONT_COLOR,getWidth(), Align.center,false,getHeight());
+        FontUtil.drawText(batch, font, text, getX(), getY(), 0.6f, P.BLACK_FONT_COLOR, getWidth(), Align.center, false, getHeight());
     }
 }

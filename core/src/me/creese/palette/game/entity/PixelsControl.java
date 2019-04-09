@@ -23,6 +23,7 @@ public class PixelsControl extends Group {
     private float currZoom = P.START_ZOOM;
     private boolean isPan;
     private boolean isZoom;
+    // группа пикселей которая сейчас нажата
     private SquadPixel downPixelSquad;
     // ширина сетки пикселей
     private int realWidth;
@@ -78,15 +79,9 @@ public class PixelsControl extends Group {
             @Override
             public void zoom(InputEvent event, float initialDistance, float distance) {
                 OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
-
                 camera.zoom = (initialDistance / distance) * currZoom;
-
                 isZoom = true;
-
-
                 checkCameraZoom();
-
-
                 if (camera.zoom < 0.2f) camera.zoom = 0.2f;
 
             }
@@ -94,19 +89,13 @@ public class PixelsControl extends Group {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
-
                 if (isDoubleTap) {
                     Bonus activateBonus = bonusGroup.getActivateBonus();
-
                     if (activateBonus != null) {
-
                         GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
                         activateBonus.doubleTapFinger(groupPixel, PixelsControl.this, lastBigPixel);
-
-
                     }
                 }
-
                 if (!isPan && !isZoom && downPixelSquad != null) {
                     lastBigPixel = downPixelSquad.touchDown(false);
                     if (lastBigPixel != null) {
@@ -159,35 +148,35 @@ public class PixelsControl extends Group {
         });
     }
 
+    /**
+     * Анимируем зум до максимума и двигаем в центр
+     */
     public void animateZoomToMax() {
         zoomActor.setScale(camera.zoom);
 
-        zoomActor.addAction(Actions.sequence(Actions.scaleTo(zoomMaxWidth, 1, 0.5f), Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                isMaxWidthZoom = true;
-                boundPos(false);
+        zoomActor.addAction(Actions.sequence(Actions.scaleTo(zoomMaxWidth, 1, 0.5f), Actions.run(() -> {
+            isMaxWidthZoom = true;
+            boundPos(false);
 
-                addAction(Actions.sequence(Actions.forever(Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (moveActor.getActions().size == 0) {
+            addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
+                if (moveActor.getActions().size == 0) {
 
-                            float worldHeight = getStage().getViewport().getWorldHeight();
-                            //camera.position.y = -((P.HEIGHT * camera.zoom) / 2 - P.HEIGHT - MARGIN);
-                            moveActor.setPosition(camera.position.x, camera.position.y);
-                            moveActor.setUserObject(false);
-                            moveActor.addAction(Actions.moveTo(camera.position.x, -((worldHeight * camera.zoom) / 2 - worldHeight - MARGIN), 0.5f));
-                            getActions().clear();
-                        }
-                    }
-                }))));
+                    float worldHeight = getStage().getViewport().getWorldHeight();
+                    moveActor.setPosition(camera.position.x, camera.position.y);
+                    moveActor.setUserObject(false);
+                    moveActor.addAction(Actions.moveTo(camera.position.x, -((worldHeight * camera.zoom) / 2
+                            - worldHeight - MARGIN-((worldHeight*camera.zoom)/2)+realHeight/2.f), 0.5f));
+                    getActions().clear();
+                }
+            }))));
 
 
-            }
         })));
     }
 
+    /**
+     * Проверяем не вышел ли за пределы зум камеры
+     */
     private void checkCameraZoom() {
         if (camera.zoom > zoomMaxWidth) {
             isMaxWidthZoom = true;
@@ -202,6 +191,10 @@ public class PixelsControl extends Group {
         }
     }
 
+    /**
+     * Проверяем и поправляем позицию пикселей
+     * @param isPan
+     */
     private void boundPos(boolean isPan) {
 
 

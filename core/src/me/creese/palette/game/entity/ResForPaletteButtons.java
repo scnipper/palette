@@ -1,4 +1,4 @@
-package me.creese.palette.game.entity.buttons;
+package me.creese.palette.game.entity;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,6 +7,9 @@ import me.creese.palette.game.util.FTextures;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 
+/**
+ * Ресурсы для кнопок палитры
+ */
 public class ResForPaletteButtons {
     public final Sprite circle;
     public final Sprite strokeCircle;

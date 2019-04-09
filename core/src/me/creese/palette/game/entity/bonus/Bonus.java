@@ -18,6 +18,9 @@ import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.TexturePrepare;
 
+/**
+ * Абстрактный класс бонусов
+ */
 public abstract class Bonus extends Actor {
 
     private final Sprite circle;
@@ -25,6 +28,7 @@ public abstract class Bonus extends Actor {
     private final BitmapFont font;
     private Sprite icon;
     private boolean isDrawCircle;
+    // текст описания
     private String descText;
     private boolean isDrawText;
     private float fontScale = 0.6f;
@@ -63,6 +67,9 @@ public abstract class Bonus extends Actor {
 
     }
 
+    /**
+     * Удаляем бонус
+     */
     public void deleteBonus() {
         BonusGroup parent = (BonusGroup) getParent();
         if (parent != null) {
@@ -89,15 +96,39 @@ public abstract class Bonus extends Actor {
         isDrawText = drawText;
     }
 
+    /**
+     * Иконка для бонуса
+     * @param icon
+     */
     public void setIcon(Sprite icon) {
         this.icon = icon;
         icon.setColor(P.BLACK_FONT_COLOR);
         icon.flip(false, true);
     }
 
+    /**
+     * Палец поднят с пикселя
+     * @param groupPixels
+     * @param pixelsControl
+     * @param bigPixel
+     */
     public abstract void upFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel);
 
+    /**
+     * Палец перемещается по пикселю
+     * @param groupPixels
+     * @param pixelsControl
+     * @param bigPixel
+     * @return
+     */
     public abstract boolean panFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel);
+
+    /**
+     * Двойное нажатие на пиксель
+     * @param groupPixels
+     * @param pixelsControl
+     * @param bigPixel
+     */
     public abstract void doubleTapFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel);
 
 

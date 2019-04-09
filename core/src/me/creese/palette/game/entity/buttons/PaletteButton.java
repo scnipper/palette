@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 
 import me.creese.palette.game.entity.PaletteButtons;
+import me.creese.palette.game.entity.ResForPaletteButtons;
 import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;

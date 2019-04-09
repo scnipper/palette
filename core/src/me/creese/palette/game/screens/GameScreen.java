@@ -22,7 +22,7 @@ import me.creese.palette.game.entity.SquadPixel;
 import me.creese.palette.game.entity.WinMenu;
 import me.creese.palette.game.entity.bonus.BonusGroup;
 import me.creese.palette.game.entity.buttons.PaletteButton;
-import me.creese.palette.game.entity.buttons.ResForPaletteButtons;
+import me.creese.palette.game.entity.ResForPaletteButtons;
 import me.creese.palette.game.entity.buttons.SelectImageBtn;
 import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.MaxPaletteException;
