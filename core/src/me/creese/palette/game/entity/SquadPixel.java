@@ -161,6 +161,13 @@ public class SquadPixel extends Actor {
         BigPixel bigPixel = gridPixels[y + arrY][x + arrX];
         bigPixel.setSquad(this);
 
+        if (!bigPixel.isVisible()) {
+            sprite.setScale(1);
+            sprite.setColor(P.GRAY_SECRET_COLOR);
+            sprite.draw(batch);
+            return;
+        }
+
         if (fillColor != null) {
             sprite.setScale(1);
             sprite.setColor(fillColor);
@@ -173,6 +180,9 @@ public class SquadPixel extends Actor {
                     sprite.draw(batch);
                     break;
                 case NOT_PAINT:
+                    sprite.setScale(1);
+                    sprite.setColor(P.BACKGROUND_COLOR);
+                    sprite.draw(batch);
                     sprite.setColor(Color.WHITE);
                     sprite.setScale(0.95f);
                     sprite.draw(batch);
@@ -217,6 +227,8 @@ public class SquadPixel extends Actor {
                 bigPixel = gridPixels[indY][indX];
 
                 if (isJustGetPixel) return bigPixel;
+
+                if(!bigPixel.isVisible()) return bigPixel;
 
                 ScoreView scoreView = root.getTransitObject(ScoreView.class);
                 boolean isRedraw = false;

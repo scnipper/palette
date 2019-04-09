@@ -17,6 +17,7 @@ public class BigPixel {
     private Color wrongColor;
     private SquadPixel squad;
     private boolean bonusAdd;
+    private boolean isVisible;
 
 
 
@@ -26,11 +27,13 @@ public class BigPixel {
     }
     public BigPixel(int numColor, Color color, int posX, int posY) {
 
+
         this.numColor = numColor;
         this.color = color;
         this.posX = posX;
         this.posY = posY;
 
+        isVisible = true;
         state = State.NOT_PAINT;
 
     }
@@ -84,6 +87,14 @@ public class BigPixel {
     public void setBonusAdd(boolean bonusAdd) {
 
         this.bonusAdd = bonusAdd;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
     }
 
     public boolean getBonusAdd() {

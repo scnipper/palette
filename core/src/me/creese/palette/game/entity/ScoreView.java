@@ -18,6 +18,7 @@ import me.creese.util.display.Display;
 
 public class ScoreView extends Actor {
 
+    private static final float PERCENT_TO_ADD_MORE_SECRET_PIXELS = 0.8f;
     private final Sprite sprite;
     private final Sprite shadow;
     private final BitmapFont font;
@@ -25,6 +26,7 @@ public class ScoreView extends Actor {
     private int totalPixels;
     private int currPixels;
     private String drawText = "";
+    private int countSecretPixels;
 
     public ScoreView(Display root) {
         this.root = root;
@@ -49,21 +51,43 @@ public class ScoreView extends Actor {
         updateDrawText();
     }
 
+    /**
+     * Увеличение закрашенных пикселей
+     * @return Возвращает true если пиксели все закрашены
+     */
     public boolean iteratePixel() {
         currPixels++;
         updateDrawText();
+        GameScreen gameScreen = root.getGameViewForName(GameScreen.class);
+
+        if(P.get().isSecretMode && countSecretPixels < totalPixels) {
+            if(currPixels>= countSecretPixels*PERCENT_TO_ADD_MORE_SECRET_PIXELS) {
+                countSecretPixels += gameScreen.getGroupPixels().openMoreSecretPixels();
+            }
+        }
+
+
 
         if(currPixels >= totalPixels ) {
 
-            root.getGameViewForName(GameScreen.class).gameOver();
+            gameScreen.gameOver();
             return true;
         }
         return false;
     }
+    public void setCountSecretPixels(int countSecretPixels) {
+        this.countSecretPixels = countSecretPixels;
+    }
+
+    /**
+     * Уменьшение количества закрашенных пикселей
+     * @param delta
+     */
     public void decrementScore(int delta) {
         currPixels-=delta;
         updateDrawText();
     }
+
     public void setCurrPixels(int currPixels) {
         this.currPixels = currPixels;
         updateDrawText();

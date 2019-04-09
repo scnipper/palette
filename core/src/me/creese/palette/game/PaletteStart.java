@@ -3,10 +3,9 @@ package me.creese.palette.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import me.creese.palette.game.entity.GroupPixels;
 import me.creese.palette.game.entity.buttons.SelectImageBtn;
-import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.GameScreen;
+import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.screens.MainScreen;
 import me.creese.palette.game.util.AdUtil;
 import me.creese.palette.game.util.P;
@@ -25,8 +24,14 @@ public class PaletteStart extends Display {
 
     @Override
     public void create() {
-        P.get().rootBatch = new SpriteBatch(2000);
-        addTransitObject(AdUtil.class.getName(),adutil);
+        P.get().rootBatch = new SpriteBatch(2000) {
+            @Override
+            public void end() {
+                super.end();
+                System.out.println("render calls" + renderCalls);
+            }
+        };
+        addTransitObject(AdUtil.class.getName(), adutil);
         P.get().saves = Gdx.app.getPreferences("sav");
         String keyImg0 = S.IMG + "0";
         if (P.get().saves.getInteger(keyImg0) == 0) {
@@ -36,8 +41,7 @@ public class PaletteStart extends Display {
 
         long launches = P.get().saves.getLong(S.COUNT_LAUNCH);
         launches++;
-        P.get().saves.putLong(S.COUNT_LAUNCH,launches);
-
+        P.get().saves.putLong(S.COUNT_LAUNCH, launches);
 
 
         P.get().saves.flush();

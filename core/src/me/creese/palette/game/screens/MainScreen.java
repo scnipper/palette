@@ -23,6 +23,7 @@ public class MainScreen extends GameView {
 
     private final BitmapFont font;
     private final StatMenu statMenu;
+    private final Group selectModeMenu;
     private Group startButtons;
     private SelectImageMenu selectImageMenu;
     private String headText;
@@ -41,10 +42,42 @@ public class MainScreen extends GameView {
         });
 
         selectImageMenu = new SelectImageMenu(getRoot());
+        selectModeMenu = new Group();
 
 
     }
 
+    private void showModeGameMenu() {
+        startButtons.remove();
+        headText = "Выберите режим игры";
+        addActor(selectModeMenu);
+        if(selectModeMenu.getChildren().size == 0) {
+            makeButton("Обычный",800,selectModeMenu,new ActorGestureListener(){
+                @Override
+                public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    P.get().isSecretMode = false;
+
+                    showSelectImage();
+
+                }
+            });
+            makeButton("Завеса тайны",600,selectModeMenu,new ActorGestureListener(){
+                @Override
+                public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    P.get().isSecretMode = true;
+
+                    showSelectImage();
+                }
+            });
+        }
+    }
+    private void showSelectImage() {
+        selectModeMenu.remove();
+
+        headText = "Выберите изображение";
+        addActor(selectImageMenu);
+
+    }
     private void showStat() {
         startButtons.remove();
         headText = "Статистика";
@@ -72,14 +105,7 @@ public class MainScreen extends GameView {
         makeButton("Начать игру", 1000,startButtons, new ActorGestureListener() {
             @Override
             public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                startButtons.remove();
-
-             /*   if (selectImageMenu == null) {
-                    selectImageMenu = new SelectImageMenu(getRoot());
-                }*/
-
-                headText = "Выберите изображение";
-                addActor(selectImageMenu);
+                showModeGameMenu();
 
 
             }
@@ -127,6 +153,7 @@ public class MainScreen extends GameView {
 
         statMenu.remove();
         selectImageMenu.remove();
+        selectModeMenu.remove();
         addActor(startButtons);
         headText = "Palette Game";
 

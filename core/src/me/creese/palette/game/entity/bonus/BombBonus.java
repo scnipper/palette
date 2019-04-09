@@ -23,6 +23,7 @@ public class BombBonus extends Bonus {
     @Override
     public void upFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel) {
 
+        if(!bigPixel.isVisible()) return;
         Color pixelColor = bigPixel.getColor().cpy();
         pixelColor.a = 0.5f;
         SquadPixel squad = bigPixel.getSquad();
@@ -37,7 +38,7 @@ public class BombBonus extends Bonus {
                         BigPixel pixel = gridPixels[j][i];
 
 
-                        if (!pixel.getState().equals(BigPixel.State.PAINT)) {
+                        if (!pixel.getState().equals(BigPixel.State.PAINT) && pixel.isVisible()) {
                             pixel.setBonusAdd(true);
                             pixel.setState(BigPixel.State.PAINT);
                             scoreView.iteratePixel();

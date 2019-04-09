@@ -252,14 +252,23 @@ public class GameScreen extends GameView {
 
         gridPixels = new BigPixel[texture.getHeight()][texture.getWidth()];
 
+        int centerGridX = texture.getWidth() / 2;
+        int centerGridY = texture.getHeight() / 2;
+
+        int countSecretPixels = 0;
+
         for (int i = 0; i < texture.getHeight(); i++) {
             for (int j = 0; j < texture.getWidth(); j++) {
 
                 int color = pixmap.getPixel(j, i);
 
 
-                color &= 0xffffff00;
-                color |= 0x000000ff;
+                if(color == 0) {
+                    color  = 0xffffffff;
+                } else {
+                    color &= 0xffffff00;
+                    color |= 0x000000ff;
+                }
 
                 Color colorObj = new Color(color);
                 int numColor = addOrFindColorPalette(colorObj);
@@ -269,11 +278,25 @@ public class GameScreen extends GameView {
 
                 BigPixel bigPixel = new BigPixel(numColor, colorObj, j, i);
 
+                if(P.get().isSecretMode) {
+                    bigPixel.setVisible(false);
+
+                    if (j > centerGridX - 6 && j < centerGridX + 5 && i > centerGridY - 6 && i < centerGridY + 5) {
+                        bigPixel.setVisible(true);
+                        countSecretPixels++;
+                    }
+
+                }
                 gridPixels[i][j] = bigPixel;
 
             }
 
         }
+
+        if(P.get().isSecretMode) {
+            scoreView.setCountSecretPixels(countSecretPixels);
+        }
+
 
         xCurrSquad = 0;
         yCurrSquad = 0;
@@ -285,6 +308,7 @@ public class GameScreen extends GameView {
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
         pixelsControl.setRealSize(texture.getWidth() * BigPixel.WIDTH_PIXEL, texture.getHeight() * BigPixel.HEIGHT_PIXEL);
+        //pixelsControl.setRealSize(10 * BigPixel.WIDTH_PIXEL, 10 * BigPixel.HEIGHT_PIXEL);
 
 
 
@@ -325,10 +349,13 @@ public class GameScreen extends GameView {
         return history;
     }
 
-    public long getStartTime() {
-        return startTime;
+    public PixelsControl getPixelsControl() {
+        return pixelsControl;
     }
 
+    public PaletteButtons getPaletteButtons() {
+        return paletteButtons;
+    }
     @Override
     protected void postRender() {
         if (isStartLoading) {
@@ -366,11 +393,5 @@ public class GameScreen extends GameView {
 
     }
 
-    public PixelsControl getPixelsControl() {
-        return pixelsControl;
-    }
 
-    public PaletteButtons getPaletteButtons() {
-        return paletteButtons;
-    }
 }

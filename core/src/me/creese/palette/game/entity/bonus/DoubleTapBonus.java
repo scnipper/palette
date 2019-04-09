@@ -39,6 +39,8 @@ public class DoubleTapBonus extends Bonus {
 
         //if(bigPixel.getState().equals(BigPixel.State.PAINT)) return;
 
+        if(!bigPixel.isVisible()) return;
+
         SquadPixel squad = bigPixel.getSquad();
         BigPixel[][] gridPixels = squad.getGridPixels();
 
@@ -178,7 +180,7 @@ public class DoubleTapBonus extends Bonus {
     @Override
     public void doubleTapFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel) {
 
-        if (bigPixel.getState().equals(BigPixel.State.WRONG_PAINT)) return;
+        if (bigPixel.getState().equals(BigPixel.State.WRONG_PAINT) || !bigPixel.isVisible()) return;
 
         startNumColor = bigPixel.getNumColor();
 

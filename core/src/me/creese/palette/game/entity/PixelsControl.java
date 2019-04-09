@@ -108,7 +108,7 @@ public class PixelsControl extends Group {
                 if (!isPan && !isZoom && downPixelSquad != null) {
                     lastBigPixel = downPixelSquad.touchDown(false);
                     if (lastBigPixel != null) {
-                        if (lastBigPixel.getState().equals(BigPixel.State.PAINT) && !lastBigPixel.getBonusAdd()) {
+                        if (lastBigPixel.getState().equals(BigPixel.State.PAINT) && !lastBigPixel.getBonusAdd() && lastBigPixel.isVisible()) {
                             lastBigPixel.setBonusAdd(true);
                             if (bonusGroup.getActivateBonus() == null) {
                                 bonusGroup.addRandomBonus(event.getStageX(), event.getStageY());
