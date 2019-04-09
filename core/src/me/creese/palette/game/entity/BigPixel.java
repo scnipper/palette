@@ -6,16 +6,26 @@ import java.util.ArrayList;
 
 import me.creese.palette.game.screens.GameScreen;
 
+/**
+ * Модель пикселя
+ */
 public class BigPixel {
     public static final int WIDTH_PIXEL = 32;
     public static final int HEIGHT_PIXEL = 32;
+    // номер цвета
     private final int numColor;
+    // цвет для сплошной заливки
     private final Color color;
+    // позиция по x в массиве сетки
     private final int posX;
+    // позиция по y в массиве сетки
     private final int posY;
+    // состояние
     private State state;
+    // ошибочный цвет
     private Color wrongColor;
     private SquadPixel squad;
+    // если true бонусы не добавляются при нажатии
     private boolean bonusAdd;
     private boolean isVisible;
 

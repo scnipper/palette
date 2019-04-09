@@ -4,7 +4,6 @@ package me.creese.palette.game.entity.buttons;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -74,7 +73,7 @@ public class PaletteButton extends Actor {
         Group parent = getParent();
         float xPos = parent.getX() + getX();
 
-        if(xPos > -getWidth() && xPos < getStage().getViewport().getWorldWidth()) {
+        if (xPos > -getWidth() && xPos < getStage().getViewport().getWorldWidth()) {
 
             res.circle.setPosition(getX(), getY());
             res.strokeCircle.setPosition(getX(), getY());

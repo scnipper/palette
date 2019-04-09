@@ -16,6 +16,9 @@ import me.creese.palette.game.util.P;
 import me.creese.palette.game.util.Shapes;
 import me.creese.util.display.Display;
 
+/**
+ * Класс с сообщение об успешном завершении покарски
+ */
 public class WinMenu extends Group {
 
     private final Display root;
@@ -25,6 +28,7 @@ public class WinMenu extends Group {
     private final Actor backBtn;
     private String timeText;
     private long endTime;
+    private String wrongText;
 
     public WinMenu(Display root) {
         this.root = root;
@@ -56,6 +60,11 @@ public class WinMenu extends Group {
         addActor(backBtn);
     }
 
+    /**
+     * Преобразовываем в ремя в человеческий вид
+     * @param time время в секундах
+     * @return
+     */
     private String formatTime(long time) {
         long tmp = time;
         int hour = (int) (time / 3600);
@@ -80,7 +89,9 @@ public class WinMenu extends Group {
         super.setParent(parent);
         if (parent != null) {
             timeText = "Ваше время: "+formatTime(endTime/1000);
-            setBounds(parent.getStage().getViewport().getWorldWidth()/2-300,700,600,300);
+            ScoreView scoreView = root.getTransitObject(ScoreView.class);
+            wrongText = "Вы закрасили "+scoreView.getCurrPixels()+" пикселей при этом допустив "+scoreView.getWrongPixels()+" ошибок.";
+            setBounds(parent.getStage().getViewport().getWorldWidth()/2-300,700,600,400);
             hideBtn.setBounds(50,30,150,50);
             backBtn.setBounds(getWidth()-200,30,150,50);
         }
@@ -109,6 +120,7 @@ public class WinMenu extends Group {
         FontUtil.drawText(batch,font,"Поздравляем!",getX(),getY()+getHeight()-30,0.7f,P.ACTIVATE_BONUS_COLOR,getWidth(), Align.center);
 
         FontUtil.drawText(batch,font,timeText,getX(),getY()+getHeight()-120,0.4f,P.BLACK_FONT_COLOR,getWidth(),Align.center);
+        FontUtil.drawText(batch,font,wrongText,getX(),getY()+getHeight()-200,0.4f,P.BLACK_FONT_COLOR,getWidth(),Align.center,true);
         FontUtil.drawText(batch,font,"В меню",backBtn.getX()+getX(),getY()+backBtn.getY(),0.3f,Color.WHITE,backBtn.getWidth(),Align.center,false,backBtn.getHeight());
         FontUtil.drawText(batch,font,"Скрыть",hideBtn.getX()+getX(),getY()+hideBtn.getY(),0.3f,Color.WHITE,hideBtn.getWidth(),Align.center,false,hideBtn.getHeight());
 

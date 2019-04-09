@@ -28,7 +28,7 @@ public class PaletteStart extends Display {
             @Override
             public void end() {
                 super.end();
-                System.out.println("render calls" + renderCalls);
+                //System.out.println("render calls" + renderCalls);
             }
         };
         addTransitObject(AdUtil.class.getName(), adutil);
@@ -52,6 +52,9 @@ public class PaletteStart extends Display {
 
     }
 
+    /**
+     * Загрузка заверешена создаем остальные экраны и показываем главный
+     */
     public void loadOk() {
         addListGameViews(new MainScreen(this));
         addListGameViews(new GameScreen(this));

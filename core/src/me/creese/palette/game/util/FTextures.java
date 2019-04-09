@@ -1,5 +1,8 @@
 package me.creese.palette.game.util;
 
+/**
+ * id всех ресурсов созданных на лету
+ */
 public class FTextures {
     public static final int PIXEL_SQUARE        = 1001;
     public static final int ARC_PALETTE_BUTTON  = 1002;

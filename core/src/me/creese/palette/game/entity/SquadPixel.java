@@ -43,7 +43,6 @@ public class SquadPixel extends Actor {
     private float downX;
     private float downY;
     private OrthographicCamera stageCamera;
-    private boolean isRedrawAll;
     private Color fillColor;
 
     public SquadPixel(Display root, BigPixel[][] gridPixels, int arrX, int arrY) {
@@ -155,6 +154,12 @@ public class SquadPixel extends Actor {
         if (beginAfter) rootBatch.begin();
     }
 
+    /**
+     * Как будет рисовать один пиксель
+     * @param x
+     * @param y
+     * @param batch
+     */
     private void drawOnePixel(int x, int y, Batch batch) {
 
         sprite.setPosition(x * BigPixel.WIDTH_PIXEL, ((HEIGHT_SQUAD * BigPixel.HEIGHT_PIXEL) - y * BigPixel.HEIGHT_PIXEL) - BigPixel.HEIGHT_PIXEL);
@@ -243,6 +248,7 @@ public class SquadPixel extends Actor {
                     if (bigPixel.getState().equals(BigPixel.State.PAINT)) {
                         scoreView.decrementScore(1);
                     }
+                    scoreView.iterateWrongPixel();
                     bigPixel.setState(BigPixel.State.WRONG_PAINT);
                     Color color = selectButton.getColor().cpy();
                     color.a = 0.5f;
@@ -259,6 +265,10 @@ public class SquadPixel extends Actor {
 
     }
 
+    /**
+     * Проверка на выход за экран группы пикселей
+     * @return
+     */
     private boolean boundsScreen() {
         float zoom = stageCamera.zoom;
 
@@ -286,21 +296,6 @@ public class SquadPixel extends Actor {
         return root;
     }
 
-    public void addDownX(float deltaX) {
-        this.downX += deltaX;
-    }
-
-    public void addDownY(float deltaY) {
-        this.downY += deltaY;
-    }
-
-    public float getDownX() {
-        return downX;
-    }
-
-    public float getDownY() {
-        return downY;
-    }
 
     public void setFillColor(Color fillColor) {
         this.fillColor = fillColor;

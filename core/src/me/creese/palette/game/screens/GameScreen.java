@@ -85,79 +85,6 @@ public class GameScreen extends GameView {
 
 
     /**
-     * Конец игры
-     */
-    public void gameOver() {
-
-
-        if (numImage != -1) {
-            P.get().saves.putInteger(S.IMG + numImage, SelectImageBtn.OPEN);
-            P.get().saves.putInteger(S.IMG + (numImage + 1), SelectImageBtn.UNLOCK);
-
-        }
-
-        int pixels = gridPixels.length * gridPixels[0].length;
-
-        savePixels(pixels);
-
-
-        pixelsControl.setTouchable(Touchable.disabled);
-        pixelsControl.animateZoomToMax();
-        bonusGroup.setLock(true);
-        bonusGroup.clear();
-        bonusGroup.setActivateBonus(null);
-        paletteButtons.clear();
-        scoreView.remove();
-        groupPixels.fillAllPixels(Color.WHITE);
-
-        isEnd = true;
-
-        long endTime = System.currentTimeMillis() - startTime;
-        saveEndTime(endTime);
-        P.get().saves.flush();
-        winMenu.setEndTime(endTime);
-
-
-        historyActor.addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
-            if (pixelsControl.isMaxWidthZoom()) {
-                for (int i = 0; i < perIndexCount; i++) {
-                    int index = startIndexHistory + i;
-                    if (index < history.size()) {
-                        BigPixel bigPixel = history.get(index);
-                        bigPixel.getSquad().redrawOnePixel(bigPixel.getPosX(), bigPixel.getPosY());
-                    }
-                }
-                startIndexHistory += perIndexCount;
-                if (startIndexHistory >= history.size()) {
-                    historyActor.getActions().clear();
-
-                    historyActor.addAction(Actions.sequence(Actions.delay(1.5f), Actions.run(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            addActor(winMenu);
-                        }
-                    })));
-
-                }
-            }
-        }))));
-    }
-
-    private void saveEndTime(long time) {
-        long allTime = P.get().saves.getLong(S.ALL_TIME);
-
-        P.get().saves.putLong(S.ALL_TIME, allTime + time);
-    }
-
-
-    private void savePixels(int pixels) {
-        long alreadyPaint = P.get().saves.getLong(S.PIXELS_PAINT);
-
-        P.get().saves.putLong(S.PIXELS_PAINT, alreadyPaint + pixels);
-    }
-
-    /**
      * Начало игры
      *
      * @param texture  текстура которая будет преобразована в сетку
@@ -203,11 +130,90 @@ public class GameScreen extends GameView {
 
 
         scoreView.setCurrPixels(0);
+        scoreView.setWrongPixels(0);
         startTime = System.currentTimeMillis();
         pixelsControl.setTouchable(Touchable.disabled);
         addActor(loadingActor);
         addPaletteButtons();
         getRoot().getGameViewForName(MainScreen.class).onBackPress();
+    }
+
+    /**
+     * Конец игры
+     */
+    public void gameOver() {
+
+
+        if (numImage != -1) {
+            P.get().saves.putInteger(S.IMG + numImage, SelectImageBtn.OPEN);
+            P.get().saves.putInteger(S.IMG + (numImage + 1), SelectImageBtn.UNLOCK);
+
+        }
+
+
+
+        savePixels();
+
+
+        pixelsControl.setTouchable(Touchable.disabled);
+        pixelsControl.animateZoomToMax();
+        bonusGroup.setLock(true);
+        bonusGroup.clear();
+        bonusGroup.setActivateBonus(null);
+        paletteButtons.clear();
+        scoreView.remove();
+        groupPixels.fillAllPixels(Color.WHITE);
+
+        isEnd = true;
+
+        long endTime = System.currentTimeMillis() - startTime;
+        saveEndTime(endTime);
+        P.get().saves.flush();
+        winMenu.setEndTime(endTime);
+
+
+        // рисовать пиксели в том порядке в котором рисовал пользователь
+        historyActor.addAction(Actions.sequence(Actions.forever(Actions.run(() -> {
+            if (pixelsControl.isMaxWidthZoom()) {
+                for (int i = 0; i < perIndexCount; i++) {
+                    int index = startIndexHistory + i;
+                    if (index < history.size()) {
+                        BigPixel bigPixel = history.get(index);
+                        bigPixel.getSquad().redrawOnePixel(bigPixel.getPosX(), bigPixel.getPosY());
+                    }
+                }
+                startIndexHistory += perIndexCount;
+                if (startIndexHistory >= history.size()) {
+                    historyActor.getActions().clear();
+
+                    // подождать 1.5 сек и показать сообщение о заверешении
+                    historyActor.addAction(Actions.sequence(Actions.delay(1.5f), Actions.run(() -> addActor(winMenu))));
+
+                }
+            }
+        }))));
+    }
+
+    /**
+     * Сохранение времени
+     * @param time
+     */
+    private void saveEndTime(long time) {
+        long allTime = P.get().saves.getLong(S.ALL_TIME);
+
+        P.get().saves.putLong(S.ALL_TIME, allTime + time);
+    }
+
+
+    /**
+     * Сохранение ошибочных и правильных пикселей
+     */
+    private void savePixels() {
+        long alreadyPaint = P.get().saves.getLong(S.PIXELS_PAINT);
+        long wrongPixels = P.get().saves.getLong(S.WRONG_PIXELS_PAINT);
+
+        P.get().saves.putLong(S.PIXELS_PAINT, alreadyPaint + scoreView.getCurrPixels());
+        P.get().saves.putLong(S.WRONG_PIXELS_PAINT, wrongPixels + scoreView.getWrongPixels());
     }
 
     /**
@@ -341,6 +347,7 @@ public class GameScreen extends GameView {
         }
     }
 
+
     public GroupPixels getGroupPixels() {
         return groupPixels;
     }
@@ -383,7 +390,7 @@ public class GameScreen extends GameView {
 
         if (!isEnd) {
             getRoot().getTransitObject(AdUtil.class).showDialogExit(() -> {
-                savePixels(history.size());
+                savePixels();
                 saveEndTime(System.currentTimeMillis() - startTime);
                 P.get().saves.flush();
                 getRoot().showGameView(MainScreen.class);

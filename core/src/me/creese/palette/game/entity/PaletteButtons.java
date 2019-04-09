@@ -4,10 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import me.creese.palette.game.entity.buttons.PaletteButton;
-import me.creese.palette.game.util.P;
 
 public class PaletteButtons extends Group {
 
@@ -16,7 +14,6 @@ public class PaletteButtons extends Group {
     private PaletteButton selectButton;
 
     public PaletteButtons() {
-
 
 
         addListener(new ActorGestureListener() {

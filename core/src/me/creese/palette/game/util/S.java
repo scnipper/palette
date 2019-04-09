@@ -21,6 +21,10 @@ public class S {
      */
     public static final String PIXELS_PAINT     = "paint_pixels";
     /**
+     * Количество ошибчных пикселей
+     */
+    public static final String WRONG_PIXELS_PAINT     = "wrong_paint_pixels";
+    /**
      * Все время проведенное за закрашиванием пикселей
      */
     public static final String ALL_TIME         = "all_time";

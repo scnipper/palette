@@ -27,6 +27,7 @@ public class ScoreView extends Actor {
     private int currPixels;
     private String drawText = "";
     private int countSecretPixels;
+    private int wrongPixels;
 
     public ScoreView(Display root) {
         this.root = root;
@@ -75,10 +76,6 @@ public class ScoreView extends Actor {
         }
         return false;
     }
-    public void setCountSecretPixels(int countSecretPixels) {
-        this.countSecretPixels = countSecretPixels;
-    }
-
     /**
      * Уменьшение количества закрашенных пикселей
      * @param delta
@@ -88,10 +85,31 @@ public class ScoreView extends Actor {
         updateDrawText();
     }
 
+    public void iterateWrongPixel() {
+        wrongPixels++;
+    }
+
+    public int getWrongPixels() {
+        return wrongPixels;
+    }
+
+    public void setWrongPixels(int wrongPixels) {
+        this.wrongPixels = wrongPixels;
+    }
+
+    public void setCountSecretPixels(int countSecretPixels) {
+        this.countSecretPixels = countSecretPixels;
+    }
+
+    public int getCurrPixels() {
+        return currPixels;
+    }
+
     public void setCurrPixels(int currPixels) {
         this.currPixels = currPixels;
         updateDrawText();
     }
+
 
     @Override
     protected void setParent(Group parent) {

@@ -47,6 +47,9 @@ public class MainScreen extends GameView {
 
     }
 
+    /**
+     * Меню выбора режима игры
+     */
     private void showModeGameMenu() {
         startButtons.remove();
         headText = "Выберите режим игры";
@@ -71,6 +74,10 @@ public class MainScreen extends GameView {
             });
         }
     }
+
+    /**
+     * Открыть меню выбора изображений
+     */
     private void showSelectImage() {
         selectModeMenu.remove();
 
@@ -78,6 +85,10 @@ public class MainScreen extends GameView {
         addActor(selectImageMenu);
 
     }
+
+    /**
+     * Показать статистику
+     */
     private void showStat() {
         startButtons.remove();
         headText = "Статистика";
@@ -164,6 +175,12 @@ public class MainScreen extends GameView {
         private String pixelPerLaunch;
         private String timePerPixel;
         private boolean isNoData;
+        private String textPixel;
+        private String wrongPixelPerLaunch;
+        private String textWrongPixel;
+        private float worldHeight;
+        private float worldWidth;
+
 
         @Override
         protected void setParent(Group parent) {
@@ -172,11 +189,17 @@ public class MainScreen extends GameView {
                 long countLaunch = P.get().saves.getLong(S.COUNT_LAUNCH);
                 long pixelPaint = P.get().saves.getLong(S.PIXELS_PAINT);
                 long allTime = P.get().saves.getLong(S.ALL_TIME);
+                long wrongPixel = P.get().saves.getLong(S.WRONG_PIXELS_PAINT);
+                worldHeight = parent.getStage().getViewport().getWorldHeight();
+                worldWidth = parent.getStage().getViewport().getWorldWidth();
+                textPixel = String.valueOf(pixelPaint);
+                textWrongPixel = String.valueOf(wrongPixel);
                 if(pixelPaint == 0) {
                     isNoData = true;
                 } else {
                     isNoData = false;
                     pixelPerLaunch = String.valueOf(pixelPaint / countLaunch);
+                    wrongPixelPerLaunch = String.valueOf(wrongPixel / countLaunch);
                     long tP = allTime / pixelPaint;
 
 
@@ -191,18 +214,31 @@ public class MainScreen extends GameView {
             }
         }
 
+        /**
+         * Один пункт статистики
+         * @param batch
+         * @param text Текст статистики
+         * @param value Значение
+         * @param y
+         */
+        private void drawItem(Batch batch,String text,String value,float y) {
+
+            FontUtil.drawText(batch, font, text, 50, worldHeight - y, 0.5f, P.BLACK_FONT_COLOR);
+            FontUtil.drawText(batch, font, value, 50, worldHeight - y, 0.5f, P.BLACK_FONT_COLOR, worldWidth - 100, Align.right);
+        }
         @Override
         public void draw(Batch batch, float parentAlpha) {
             super.draw(batch,parentAlpha);
-            float worldHeight = getStage().getViewport().getWorldHeight();
-            float worldWidth = getStage().getViewport().getWorldWidth();
+
             if(isNoData) {
                 FontUtil.drawText(batch,font,"Нет данных",0,0,0.8f,P.BLACK_FONT_COLOR,worldWidth,Align.center,false,worldHeight);
             } else {
-                FontUtil.drawText(batch, font, "Пикселей за одноу сессию: ", 50, worldHeight - 400, 0.5f, P.BLACK_FONT_COLOR);
-                FontUtil.drawText(batch, font, pixelPerLaunch, 50, worldHeight - 400, 0.5f, P.BLACK_FONT_COLOR, worldWidth - 100, Align.right);
-                FontUtil.drawText(batch, font, "Время закрашивания одного пикселя: ", 50, worldHeight - 470, 0.5f, P.BLACK_FONT_COLOR);
-                FontUtil.drawText(batch, font, timePerPixel, 50, worldHeight - 470, 0.5f, P.BLACK_FONT_COLOR, worldWidth - 100, Align.right);
+
+                drawItem(batch,"Пикселей за одну сессию: ",pixelPerLaunch,400);
+                drawItem(batch,"Всего пикселей: ",textPixel,470);
+                drawItem(batch,"Время закрашивания одного пикселя: ",timePerPixel,540);
+                drawItem(batch,"Ошибок за сессию: ",wrongPixelPerLaunch,610);
+                drawItem(batch,"Всего ошибок: ",textWrongPixel,680);
             }
         }
     }

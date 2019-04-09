@@ -24,7 +24,9 @@ public class PixelsControl extends Group {
     private boolean isPan;
     private boolean isZoom;
     private SquadPixel downPixelSquad;
+    // ширина сетки пикселей
     private int realWidth;
+    // высота сетки пикселей
     private int realHeight;
     private boolean isMaxWidthZoom;
     private boolean isMoveToMaxZoom;

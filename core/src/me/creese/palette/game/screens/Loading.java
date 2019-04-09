@@ -25,7 +25,9 @@ import me.creese.palette.game.util.Shapes;
 import me.creese.palette.game.util.TexturePrepare;
 import me.creese.util.display.GameView;
 
-
+/**
+ * Класс загрузки ресурсов
+ */
 public class Loading extends GameView {
 
     public static final String FONT_ROBOTO_BOLD = "fonts/font_bold.fnt";
@@ -39,6 +41,9 @@ public class Loading extends GameView {
         load();
     }
 
+    /**
+     * Начало загрузки ресурсов
+     */
     private void load() {
         P.get().asset = new AssetManager();
 
@@ -64,6 +69,9 @@ public class Loading extends GameView {
 
     }
 
+    /**
+     * Через фрейм буфер создаем текстуры на лету
+     */
     private void loadFrameTextures() {
         prep = new TexturePrepare();
         getRoot().addTransitObject(prep);
@@ -100,66 +108,44 @@ public class Loading extends GameView {
             shape.arcLine(bX,bY,60,220,30,12);
         });
 
-        prep.addDraw(FTextures.CIRCLE_PALETTE, 180, 180, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                shape.circle(bX,bY,90);
-            }
-        });
-        prep.addDraw(FTextures.SCORE_BACK, 400, 120, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                shape.rectRound(bX,bY,400,120,50);
-            }
-        });
+        prep.addDraw(FTextures.CIRCLE_PALETTE, 180, 180, (bX, bY) -> shape.circle(bX,bY,90));
+        prep.addDraw(FTextures.SCORE_BACK, 400, 120, (bX, bY) -> shape.rectRound(bX,bY,400,120,50));
 
-        prep.addDraw(FTextures.SCORE_BACK_SHADOW, 400, 120, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                shape.setSmooth(40);
-                shape.rectRound(bX,bY,400,120,50);
-                shape.setSmooth(1.5f);
-            }
+        prep.addDraw(FTextures.SCORE_BACK_SHADOW, 400, 120, (bX, bY) -> {
+            shape.setSmooth(40);
+            shape.rectRound(bX,bY,400,120,50);
+            shape.setSmooth(1.5f);
         });
-        prep.addDraw(FTextures.BLOB, 170, 158, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
-                short vert2 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
-                short vert3 = shape.vertexAdd(bX+85,bY,shape.getColor());
-                shape.indicesAdd(vert1,vert2,vert3);
-            }
+        prep.addDraw(FTextures.BLOB, 170, 158, (bX, bY) -> {
+            short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
+            short vert2 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
+            short vert3 = shape.vertexAdd(bX+85,bY,shape.getColor());
+            shape.indicesAdd(vert1,vert2,vert3);
         });
-        prep.addDraw(FTextures.SMALL_BLOB, 34, 68, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                short vert1 = shape.vertexAdd(bX,bY+32,shape.getColor());
-                short vert2 = shape.vertexAdd(bX+34,bY+32,shape.getColor());
-                short vert3 = shape.vertexAdd(bX+17,bY,shape.getColor());
-                shape.indicesAdd(vert1,vert2,vert3);
-                shape.setSmooth(0);
-                shape.circle(bX,bY+20.2f,17);
-                shape.setSmooth(1.5f);
-            }
+        prep.addDraw(FTextures.SMALL_BLOB, 34, 68, (bX, bY) -> {
+            short vert1 = shape.vertexAdd(bX,bY+32,shape.getColor());
+            short vert2 = shape.vertexAdd(bX+34,bY+32,shape.getColor());
+            short vert3 = shape.vertexAdd(bX+17,bY,shape.getColor());
+            shape.indicesAdd(vert1,vert2,vert3);
+            shape.setSmooth(0);
+            shape.circle(bX,bY+20.2f,17);
+            shape.setSmooth(1.5f);
         });
-        prep.addDraw(FTextures.BLOB_STROKE, 170, 158, new TexturePrepare.Draw() {
-            @Override
-            public void draw(float bX, float bY) {
-                short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
-                short vert2 = shape.vertexAdd(bX+12,bY+158,shape.getColor());
-                short vert3 = shape.vertexAdd(bX+85,bY+24,shape.getColor());
-                short vert4 = shape.vertexAdd(bX+85,bY,shape.getColor());
+        prep.addDraw(FTextures.BLOB_STROKE, 170, 158, (bX, bY) -> {
+            short vert1 = shape.vertexAdd(bX,bY+158,shape.getColor());
+            short vert2 = shape.vertexAdd(bX+12,bY+158,shape.getColor());
+            short vert3 = shape.vertexAdd(bX+85,bY+24,shape.getColor());
+            short vert4 = shape.vertexAdd(bX+85,bY,shape.getColor());
 
 
-                short vert5 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
-                short vert6 = shape.vertexAdd(bX+158,bY+158,shape.getColor());
+            short vert5 = shape.vertexAdd(bX+170,bY+158,shape.getColor());
+            short vert6 = shape.vertexAdd(bX+158,bY+158,shape.getColor());
 
 
-                shape.indicesAdd(vert1,vert2,vert3,
-                        vert1,vert3,vert4,
-                        vert3,vert6,vert5,
-                        vert4,vert3,vert5);
-            }
+            shape.indicesAdd(vert1,vert2,vert3,
+                    vert1,vert3,vert4,
+                    vert3,vert6,vert5,
+                    vert4,vert3,vert5);
         });
         prep.addDraw(FTextures.CLOSED_ICON, 128, 128, (bX, bY) -> {
             shape.circleLine(bX,bY, 64,20);
