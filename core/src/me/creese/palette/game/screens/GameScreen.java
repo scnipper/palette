@@ -101,17 +101,17 @@ public class GameScreen extends GameView {
         int pixels = texture.getHeight() * texture.getWidth();
 
         if (pixels > 10000) {
-            perIndexCount = 10;
-        }
-        if (pixels > 20000) {
             perIndexCount = 20;
         }
+        if (pixels > 20000) {
+            perIndexCount = 40;
+        }
         if (pixels > 40000) {
-            perIndexCount = 30;
+            perIndexCount = 50;
         }
 
         if (pixels > 70000) {
-            perIndexCount = 50;
+            perIndexCount = 80;
         }
 
         startIndexHistory = 0;
@@ -150,16 +150,16 @@ public class GameScreen extends GameView {
 
         }
 
-
+        bonusGroup.setActivateBonus(null);
+        bonusGroup.setLock(true);
+        bonusGroup.clear();
 
         savePixels();
 
 
         pixelsControl.setTouchable(Touchable.disabled);
         pixelsControl.animateZoomToMax();
-        bonusGroup.setLock(true);
-        bonusGroup.clear();
-        bonusGroup.setActivateBonus(null);
+
         paletteButtons.clear();
         scoreView.remove();
         groupPixels.fillAllPixels(Color.WHITE);

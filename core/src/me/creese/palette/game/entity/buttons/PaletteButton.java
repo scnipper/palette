@@ -16,6 +16,9 @@ import me.creese.palette.game.screens.Loading;
 import me.creese.palette.game.util.FontUtil;
 import me.creese.palette.game.util.P;
 
+/**
+ * Кнопка палитры
+ */
 public class PaletteButton extends Actor {
 
 
@@ -24,6 +27,7 @@ public class PaletteButton extends Actor {
     private final BitmapFont font;
     private final int num;
     private boolean isSelect;
+    private Color fontColor;
 
     public PaletteButton(ResForPaletteButtons res, int num) {
         this.res = res;
@@ -68,6 +72,20 @@ public class PaletteButton extends Actor {
     }
 
     @Override
+    protected void setParent(Group parent) {
+        super.setParent(parent);
+        if (parent != null) {
+            // проверяем чтобы белый текст не был на белом фоне
+            int deltaColor = Color.WHITE.toIntBits() - getColor().toIntBits();
+            if(deltaColor < 4_000_000) {
+                fontColor = P.BLACK_FONT_COLOR;
+            } else {
+                fontColor = Color.WHITE;
+            }
+        }
+    }
+
+    @Override
     public void draw(Batch batch, float parentAlpha) {
 
 
@@ -100,7 +118,7 @@ public class PaletteButton extends Actor {
             }
 
 
-            FontUtil.drawText(batch, font, text, getX(), getY(), 0.7f, isSelect ? P.BLACK_FONT_COLOR : Color.WHITE, getWidth(), Align.center, false, getHeight());
+            FontUtil.drawText(batch, font, text, getX(), getY(), 0.7f, isSelect ? P.BLACK_FONT_COLOR : fontColor, getWidth(), Align.center, false, getHeight());
         }
     }
 }

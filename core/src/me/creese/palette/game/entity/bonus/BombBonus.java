@@ -23,6 +23,7 @@ public class BombBonus extends Bonus {
     public void upFinger(GroupPixels groupPixels, PixelsControl pixelsControl, BigPixel bigPixel) {
 
         if (!bigPixel.isVisible()) return;
+        System.out.println("activate bomb bonus");
         Color pixelColor = bigPixel.getColor().cpy();
         pixelColor.a = 0.5f;
         SquadPixel squad = bigPixel.getSquad();

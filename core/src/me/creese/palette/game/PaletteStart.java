@@ -22,6 +22,9 @@ public class PaletteStart extends Display {
 
     }
 
+    /**
+     * Инициализируем приложение
+     */
     @Override
     public void create() {
         P.get().rootBatch = new SpriteBatch(2000) {
@@ -47,6 +50,7 @@ public class PaletteStart extends Display {
         P.get().saves.flush();
         Gdx.input.setCatchBackKey(true);
         setBackgroundColor(P.BACKGROUND_COLOR);
+        // сначала создаем экран загрузки и показываем его
         addListGameViews(new Loading(this));
         showGameView(Loading.class);
 
