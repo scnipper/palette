@@ -314,7 +314,6 @@ public class GameScreen extends GameView {
         OrthographicCamera camera = (OrthographicCamera) stagePixel.getCamera();
         camera.zoom = P.START_ZOOM;
         pixelsControl.setRealSize(texture.getWidth() * BigPixel.WIDTH_PIXEL, texture.getHeight() * BigPixel.HEIGHT_PIXEL);
-        //pixelsControl.setRealSize(10 * BigPixel.WIDTH_PIXEL, 10 * BigPixel.HEIGHT_PIXEL);
 
 
 
