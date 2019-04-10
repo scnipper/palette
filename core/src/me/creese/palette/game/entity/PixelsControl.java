@@ -36,6 +36,7 @@ public class PixelsControl extends Group {
     private BigPixel lastBigPixel;
     private boolean isMaxHeightZoom;
     private float zoomMaxHeight;
+    private boolean isLock;
 
     public PixelsControl(Stage stagePixel, BonusGroup bonusGroup) {
 
@@ -49,7 +50,7 @@ public class PixelsControl extends Group {
 
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                if (count >= 2) isDoubleTap = true;
+                if (count >= 2 && !isLock) isDoubleTap = true;
             }
 
             @Override
@@ -89,14 +90,14 @@ public class PixelsControl extends Group {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 currZoom = camera.zoom;
-                if (isDoubleTap) {
+                if (isDoubleTap && !isLock) {
                     Bonus activateBonus = bonusGroup.getActivateBonus();
                     if (activateBonus != null) {
                         GroupPixels groupPixel = (GroupPixels) stagePixel.getActors().get(0);
                         activateBonus.doubleTapFinger(groupPixel, PixelsControl.this, lastBigPixel);
                     }
                 }
-                if (!isPan && !isZoom && downPixelSquad != null) {
+                if (!isPan && !isZoom && !isLock && downPixelSquad != null) {
                     lastBigPixel = downPixelSquad.touchDown(false);
                     if (lastBigPixel != null) {
                         if (lastBigPixel.getState().equals(BigPixel.State.PAINT) && !lastBigPixel.getBonusAdd() && lastBigPixel.isVisible()) {
@@ -249,6 +250,10 @@ public class PixelsControl extends Group {
 
     public void setDownPixelSquad(SquadPixel downPixelSquad) {
         this.downPixelSquad = downPixelSquad;
+    }
+
+    public void setLock(boolean lock) {
+        isLock = lock;
     }
 
     public boolean isMaxWidthZoom() {

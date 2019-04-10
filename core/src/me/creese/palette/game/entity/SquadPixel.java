@@ -33,6 +33,7 @@ public class SquadPixel extends Actor {
     private static final float FONT_SCALE = 0.35f;
     private OrthographicCamera camera;
     private final BigPixel[][] gridPixels;
+    // позиция в сетку пикселей
     private final int arrX;
     private final int arrY;
     private final BitmapFont font;

@@ -120,7 +120,7 @@ public class WinMenu extends Group {
         FontUtil.drawText(batch,font,"Поздравляем!",getX(),getY()+getHeight()-30,0.7f,P.ACTIVATE_BONUS_COLOR,getWidth(), Align.center);
 
         FontUtil.drawText(batch,font,timeText,getX(),getY()+getHeight()-120,0.4f,P.BLACK_FONT_COLOR,getWidth(),Align.center);
-        FontUtil.drawText(batch,font,wrongText,getX(),getY()+getHeight()-200,0.4f,P.BLACK_FONT_COLOR,getWidth(),Align.center,true);
+        FontUtil.drawText(batch,font,wrongText,getX()+30,getY()+getHeight()-200,0.4f,P.BLACK_FONT_COLOR,getWidth()-60,Align.center,true);
         FontUtil.drawText(batch,font,"В меню",backBtn.getX()+getX(),getY()+backBtn.getY(),0.3f,Color.WHITE,backBtn.getWidth(),Align.center,false,backBtn.getHeight());
         FontUtil.drawText(batch,font,"Скрыть",hideBtn.getX()+getX(),getY()+hideBtn.getY(),0.3f,Color.WHITE,hideBtn.getWidth(),Align.center,false,hideBtn.getHeight());
 
